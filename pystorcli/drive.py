@@ -463,11 +463,15 @@ class Drive(object):
         ]
         return common.response_cmd(self._run(args))
 
-    def hotparedrive_create(self, dgs=None, nonrevertible=False):
+    def hotparedrive_create(self, dgs=None, enclaffinity=None, nonrevertible=False):
         """Creates a hotspare drive
 
         Args:
             dgs (str): specifies the drive group to which the hotspare drive is dedicated (N|0,1,2...)
+            enclaffinity (str): Specifies the enclosure to which the hotspare is associated with.
+                                If this option is specified, affinity is set; if it is not specified, 
+                                there is no affinity.NOTE Affinity cannot be removed once it is set 
+                                for a hotspare drive.
             nonrevertible (bool): sets the drive as a nonrevertible hotspare
 
         Returns:
@@ -480,6 +484,8 @@ class Drive(object):
 
         if dgs:
             args.append(dgs)
+        if enclaffinity:
+            args.append(enclaffinity)
         if nonrevertible:
             args.append('nonrevertible')
         return common.response_cmd(self._run(args))
