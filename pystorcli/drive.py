@@ -1,4 +1,4 @@
-`# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 # Copyright (c) 2018, Martin Dojcak <martin@dojcak.sk>
 # See LICENSE for details.
