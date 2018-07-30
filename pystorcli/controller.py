@@ -12,6 +12,160 @@ from . import enclosure
 from . import virtualdrive
 
 
+class ControllerMetrics(object):
+    """StorCLI Controller Metrics
+
+    Instance of this class represents controller metrics
+    """
+    def __init__(self, ctl):
+        """Constructor - create StorCLI ControllerMetrics object
+
+        Args:
+            ctl (:obj:Controller): controller object
+
+        Properties:
+            state (str): controller status
+            memory_correctable_error (str): number of controllers memory correctable errors
+            memory_uncorrectable_error (str): number of controllers memory uncorrectable errors
+            drive_groups (str): number of drive groups on controller
+            virtual_drives (str): number of virtual drives on controller
+            virtual_drives_non_optimal (dict): number of virtual drives with in non optimal state
+            physical_drives (str): number of physical drives on controller
+            physical_drives_non_optimal (dict): number of physical drives in non optimal state
+            roc_temperature (str): RAID-on-Chip temperature
+            ctl_temperature (str): controller temperature
+            all (dict): all metrics
+        """
+        self._ctl = ctl
+
+    @property
+    def _show_all(self):
+        args = [
+            'show',
+            'all',
+        ]
+        return common.response_data(self._ctl._run(args))
+
+    @property
+    def _status(self):
+        return self._show_all['Status']
+
+    @property
+    def _hwcfg(self):
+        return self._show_all['HwCfg']
+
+    @property
+    @common.lower
+    def state(self):
+        """(str): controller status (Needs Attention | Optimal | Failed | Unknown)
+        """
+        return self._status["Controller Status"]
+
+    @property
+    def memory_correctable_error(self):
+        """(str): number of controllers memory correctable errors
+        """
+        return self._status["Memory Correctable Errors"]
+
+    @property
+    def memory_uncorrectable_error(self):
+        """(str): number of controllers memory uncorrectable errors
+        """
+        return self._status["Memory Uncorrectable Errors"]
+
+    @property
+    def drive_groups(self):
+        """(str): number of drive groups on controller
+        """
+        data = self._show_all
+        if 'Drive Groups' in data:
+            return data["Drive Groups"]
+        return str(0)
+
+    @property
+    def virtual_drives(self):
+        """(str): number of virtual drives on controller
+        """
+        data = self._show_all
+        if 'Virtual Drives' in data:
+            return data["Virtual Drives"]
+        return str(0)
+
+    @property
+    def virtual_drives_non_optimal(self):
+        """(dict): number of virtual drives with in non optimal state
+        """
+        vds = {}
+
+        if not self._ctl.vds.has_vds:
+            return vds
+
+        for vd in self._ctl.vds:
+            if not vd.state == 'optimal':
+                if vd.state in vds:
+                    vds[vd.state] += 1
+                else:
+                    vds[vd.state] = 1
+        return vds
+
+    @property
+    def physical_drives(self):
+        """(str): number of physical drives on controller
+        """
+        data = self._show_all
+
+        if 'Physical Drives' in data:
+            return data["Physical Drives"]
+        return str(0)
+
+    @property
+    def physical_drives_non_optimal(self):
+        """(dict): number of physical drives in non optimal state (UBad | Offln)
+        """
+        drives = {}
+
+        for encl in self._ctl.encls:
+            if not encl.has_drives:
+                continue
+            for drive in encl.drives:
+                if not drive.state in ('good', 'online'):
+                    if drive.state in drives:
+                        drives[drive.state] += 1
+                    else:
+                        drives[drive.state] = 1
+        return drives
+
+    @property
+    def roc_temperature(self):
+        """(str): RAID-on-Chip temperature or unknown if absent
+        """
+        hwcfg = self._hwcfg
+        if hwcfg['Temperature Sensor for ROC'] == 'Present':
+            return hwcfg['ROC temperature(Degree Celsius)']
+        return 'unknown'
+
+    @property
+    def ctl_temperature(self):
+        """(str): Controller temperature or unknown if absent
+        """
+        hwcfg = self._hwcfg
+
+        if hwcfg['Temperature Sensor for Controller'] == 'Present':
+            return hwcfg['Controller temperature(Degree Celsius)']
+        return 'unknown'
+
+    @property
+    def all(self):
+        """(dict): all metrics
+        """
+        metrics = {}
+
+        for attribute in dir(self):
+            if not attribute.startswith('_') and not attribute == 'all':
+                metrics[attribute] = self.__getattribute__(attribute)
+        return metrics
+
+
 class Controller(object):
     """StorCLI Controller
 
@@ -78,7 +232,7 @@ class Controller(object):
     def metrics(self):
         """(:obj:ControllerMetrics): controller metrics
         """
-        pass
+        return ControllerMetrics(ctl=self)
 
     @property
     def vds(self):

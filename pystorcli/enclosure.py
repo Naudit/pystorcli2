@@ -72,12 +72,6 @@ class Enclosure(object):
         return common.response_data(self._run(args))
 
     @property
-    def metrics(self):
-        """(dict): enclosure metrics for monitoring
-        """
-        pass
-
-    @property
     def ctl_id(self):
         """(str): enclosure controller id
         """
