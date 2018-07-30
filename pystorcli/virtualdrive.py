@@ -232,12 +232,21 @@ class VirtualDrive(object):
     @property
     @common.lower
     def state(self):
-        """(str): virtual drive state
+        """(str): virtual drive state (optimal | recovery | offline | degraded | degraded_partially)
         """
         args = [
             'show'
         ]
-        return self._response_properties(self._run(args))['State']
+        state = self._response_properties(self._run(args))['State']
+        if state == 'Optl':
+            return 'optimal'
+        elif state == 'Rec':
+            return 'recovery'
+        elif state == 'OfLn':
+            return 'offline'
+        elif state == 'Pdgd':
+            return 'degraded_partially'
+        return 'degraded'
 
     @property
     def strip(self):
