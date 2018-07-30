@@ -8,7 +8,7 @@ def read(fname):
 
 setuptools.setup(
     name="pystorcli",
-    version="0.0.5",
+    version="0.1.0",
     author="Martin Dojcak",
     author_email="martin@dojcak.sk",
     description="StorCLI module wrapper",
