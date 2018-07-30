@@ -172,6 +172,7 @@ class VirtualDrive(object):
         self._name = '/c{0}/v{1}'.format(self._ctl_id, self._vd_id)
 
     def _run(self, args, **kwargs):
+        args = args[:]
         args.insert(0, self._name)
         return self._storcli.run(args, **kwargs)
 

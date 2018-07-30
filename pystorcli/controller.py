@@ -203,6 +203,7 @@ class Controller(object):
         return '{0}'.format(common.response_data(self._run(['show'])))
 
     def _run(self, args, **kwargs):
+        args = args[:]
         args.insert(0, self._name)
         return self._storcli.run(args, **kwargs)
 

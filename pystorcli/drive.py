@@ -252,6 +252,7 @@ class Drive(object):
         return common.response_data(out)[detailed_info][attr]
 
     def _run(self, args, **kwargs):
+        args = args[:]
         args.insert(0, self._name)
         return self._storcli.run(args, **kwargs)
 

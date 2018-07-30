@@ -46,6 +46,7 @@ class Enclosure(object):
         self._name = '/c{0}/e{1}'.format(self._ctl_id, self._encl_id)
 
     def _run(self, args, **kwargs):
+        args = args[:]
         args.insert(0, self._name)
         return self._storcli.run(args, **kwargs)
 
