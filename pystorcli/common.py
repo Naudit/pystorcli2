@@ -61,6 +61,8 @@ def lower(func):
         str: lower output of func
     """
     def wrapper(*args, **kwargs):
+        """func effective wrapper
+        """
         return func(*args, **kwargs).lower()
     return wrapper
 
@@ -84,12 +86,16 @@ def drives_from_expression(expr):
     #   e1:a-b,z,c-d,e2:a-b,z,c-d
 
     def get_encl_id(pos=0):
+        """Get enclosure id from expression
+        """
         range_pos = expr[pos:].find(':')
         encl_id = expr[pos:range_pos]
         pos += range_pos + 1
         return (encl_id, pos)
 
     def get_nearest_separator():
+        """Get nearest expression separator
+        """
         types = {
             'slot': expr[pos:].find(',') % 1000,
             'range': expr[pos:].find('-') % 1000,

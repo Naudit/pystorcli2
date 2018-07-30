@@ -19,7 +19,7 @@ class StorCLI(object):
     """StorCLI command line wrapper
     """
     def __init__(self, binary='storcli64'):
-        """Constructor - create StorCLI object wrapper for cmd line
+        """Constructor - create StorCLI object wrapper
 
         Args:
             binary (str): storcli binary or full path to the binary

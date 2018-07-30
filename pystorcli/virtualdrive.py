@@ -12,9 +12,9 @@ from . import controller
 from . import drive
 
 class VirtualDrive(object):
-    """StorCLI enclosure
+    """StorCLI VirtualDrive
 
-    Instance of this class represents enclosure in StorCLI hierarchy
+    Instance of this class represents virtual drive (RAID) in StorCLI hierarchy
 
     Args:
         ctl_id (str): controller id
@@ -23,8 +23,8 @@ class VirtualDrive(object):
 
     Properties:
         id (str): virtual drive id
-        facts (dict): virtual drive settings and other stuff
-        metrics (dict): virtual drive metrics for monitoring
+        facts (dict): raw virtual drive facts
+        metrics (dict): virtual drive metrics
         raid (str): vitual drive raid level
         size (str): virtual drive size
         state (str): virtual drive state
@@ -40,31 +40,31 @@ class VirtualDrive(object):
         wrcache (str): write cache policy on a virtual drive (also setter)
         rdcache (str): read cache policy on a virtual drive (also setter)
         iopolicy (str): I/O policy on a virtual drive (also setter)
-        autobgi (str): auto background initialization setting (also setter)
+        autobgi (str):virtual drive auto background initialization setting (also setter)
 
     Methods:
         init_start (dict): starts the initialization process on a virtual drive
         init_stop (dict): stops an initialization process running on a virtual drive
-        init_running (bool): check if init is running
-        init_progress (str): % progress of init
-        erase_start (dict): securely erases non-SED drives
+        init_running (bool): check if initialization is running on a virtual drive
+        erase_start (dict): securely erases non-SED virtual drive
         erase_stop (dict): stops an erase process running on a virtual drive
-        erase_running (bool): check if erase is running
-        erase_progress (str): % progress of erase
+        erase_running (bool): check if erase is running on a virtual drive
+        erase_progress (str): % progress of erase on a virtual drive
         delete (dict): delete virtual drive
         migrate_start (dict): starts the migration process on a virtual drive
         migrate_stop (dict): stops an migration process running on a virtual drive
-        migrate_running (bool): check if migrate is running
-        migrate_progress (str):% progress of migrate
-        get_vd (:obj:VirtualDrive): Get virtual drive object by id
-        get_named_vd (:obj:VirtualDrive): Get virtual drive object by name
+        migrate_running (bool): check if migrate is running on a virtual drive
 
-    Todo:
-        * Facts
-        * Metrics
+    TODO:
+        Implement missing methods:
+            * start cc
+            * stop cc
+            * pause cc
+            * resume cc
+            * cc running
     """
     def __init__(self, ctl_id, vd_id, binary='storcli64'):
-        """Constructor - create StorCLI Drive object
+        """Constructor - create StorCLI VirtualDrive object
 
         Args:
             ctl_id (str): controller id
@@ -100,7 +100,7 @@ class VirtualDrive(object):
 
     @property
     def facts(self):
-        """(dict): virtual drive settings and other stuff
+        """(dict): raw virtual drive facts
         """
         args = [
             'show',
@@ -110,14 +110,14 @@ class VirtualDrive(object):
 
     @property
     def metrics(self):
-        """(dict): virtual drive metrics for monitoring
+        """(:obj:VirtualDriveMetrics): virtual drive metrics
         """
-        pass
+        return VirtualDriveMetrics(self)
 
     @property
     @common.lower
     def raid(self):
-        """(str): vitual drive raid level
+        """(str): virtual drive raid level
         """
         args = [
             'show'
@@ -181,7 +181,7 @@ class VirtualDrive(object):
 
     @property
     def ctl_id(self):
-        """(str): virtual drive controller
+        """(str): virtual drive controller id
         """
         return self._ctl_id
 
@@ -193,7 +193,7 @@ class VirtualDrive(object):
 
     @property
     def drives(self):
-        """(list of :obj:Drive): virtual drive drives
+        """(list of :obj:Drive): drives
         """
         args = [
             'show',
@@ -216,7 +216,9 @@ class VirtualDrive(object):
 
     @property
     def name(self):
-        """Get/set virtual drive name
+        """Get/Set virtual drive name
+
+        The name is restricted to 15 characters.
 
         Returns:
             (str): raid name
@@ -240,14 +242,14 @@ class VirtualDrive(object):
 
     @property
     def bootdrive(self):
-        """Get/set virtual drive as Boot Drive
+        """Get/Set virtual drive as Boot Drive
 
         One of the following options can be set (str):
             on - enable boot virtual drive
             off - disable boot virtual dirve
 
         Returns:
-            (str): on/off
+            (str): on / off
         """
         args = [
             '/c{0}'.format(self._ctl_id),
@@ -272,14 +274,14 @@ class VirtualDrive(object):
 
     @property
     def pdcache(self):
-        """Get/set PD Cache Setting
+        """Get/Set PD Cache Setting
 
         One of the following options can be set (str):
             on - enables PD Caching
             off - disables PD Caching
 
         Returns:
-            (str): on/off
+            (str): on / off
         """
         args = [
             'show',
@@ -305,7 +307,7 @@ class VirtualDrive(object):
 
     @property
     def wrcache(self):
-        """Get/set Write cache setting
+        """Get/Set Write cache setting
 
         One of the following options can be set (str):
             wt - write Through
@@ -313,7 +315,7 @@ class VirtualDrive(object):
             awb - write Back even in case of bad BBU also
 
         Returns:
-            (str): wt/wb/awb
+            (str): wt / wb / awb
         """
         args = [
             'show',
@@ -338,14 +340,14 @@ class VirtualDrive(object):
 
     @property
     def rdcache(self):
-        """Get/set Read cache setting
+        """Get/Set Read cache setting
 
         One of the following options can be set (str):
             ra - Read Ahead
             nora - No Read Ahead
 
         Returns:
-            (str): ra/nora
+            (str): ra / nora
         """
         args = [
             'show',
@@ -368,14 +370,14 @@ class VirtualDrive(object):
 
     @property
     def iopolicy(self):
-        """Get/set iopolicy setting
+        """Get/Set iopolicy setting
 
         One of the following options can be set (str):
             cached - IOs are cached
             direct - IOs are not cached
 
         Returns:
-            (str): cached/direct
+            (str): cached / direct
         """
         args = [
             'show',
@@ -400,14 +402,14 @@ class VirtualDrive(object):
     @property
     @common.lower
     def autobgi(self):
-        """Get/set auto background initialization
+        """Get/Set auto background initialization
 
         One of the following options can be set (str):
             on - enables autobgi
             off - disables autobgi
 
         Returns:
-            (str): on/off
+            (str): on / off
         """
         args = [
             'show',
@@ -426,7 +428,7 @@ class VirtualDrive(object):
         return common.response_setter(self._run(args))
 
     def init_start(self, full=False, force=False):
-        """Starts the initialization of a virtual drive.
+        """Starts the initialization of a virtual drive
 
         Args:
             full (bool, optional): if specified then it is the full init otherwise it is Fast init
@@ -447,7 +449,7 @@ class VirtualDrive(object):
         return common.response_cmd(self._run(args))
 
     def init_stop(self):
-        """Stops the initialization of a virtual drive.
+        """Stops the initialization of a virtual drive
 
         A stopped initialization process cannot be resumed.
 
@@ -462,7 +464,7 @@ class VirtualDrive(object):
 
     @property
     def init_running(self):
-        """Check initialization process process.
+        """Check if initialization is running on a virtual drive
 
         Returns:
             (bool): true / false
@@ -493,7 +495,7 @@ class VirtualDrive(object):
         return progress
 
     def erase_start(self, mode='simple'):
-        """Securely erases non-SED drives with specified erasepattern.
+        """Securely erases non-SED drives with specified erase pattern
 
         Args:
             mode (str, optional):
@@ -514,7 +516,7 @@ class VirtualDrive(object):
         return common.response_cmd(self._run(args))
 
     def erase_stop(self):
-        """Stops the erase operation of a virtual drive.
+        """Stops the erase operation of a virtual drive
 
         Returns:
             (dict): resposne cmd data
@@ -527,7 +529,7 @@ class VirtualDrive(object):
 
     @property
     def erase_running(self):
-        """Check erase process process.
+        """Check if erase is running on a virtual drive
 
         Returns:
             (bool): true / false
@@ -542,7 +544,7 @@ class VirtualDrive(object):
 
     @property
     def erase_progress(self):
-        """Show virtual drive erase progress.
+        """Show virtual drive erase progress in percentage
 
         Returns:
             (str): progress in percentage
@@ -559,17 +561,17 @@ class VirtualDrive(object):
         return progress
 
     def delete(self, force=False):
-        """ Deletes a particular virtual drive.
+        """Deletes a particular virtual drive
 
         Args:
             force (bool, optional): If you delete a virtual drive with a valid MBR
-                          without erasing the data and then create a new
-                          virtual drive using the same set of physical drives
-                          and the same RAID level as the deleted virtual drive,
-                          the old unerased MBR still exists at block0 of the
-                          new virtual drive, which makes it a virtual drive with
-                          valid user data. Therefore, you must provide the
-                          force option to delete this newly created virtual drive.
+                                    without erasing the data and then create a new
+                                    virtual drive using the same set of physical drives
+                                    and the same RAID level as the deleted virtual drive,
+                                    the old unerased MBR still exists at block0 of the
+                                    new virtual drive, which makes it a virtual drive with
+                                    valid user data. Therefore, you must provide the
+                                    force option to delete this newly created virtual drive.
 
         Returns:
             (dict): resposne cmd data
@@ -583,12 +585,12 @@ class VirtualDrive(object):
         return  common.response_cmd(self._run(args))
 
     def migrate_start(self, option, drives, raid=None, force=False):
-        """Starts migartion on the virtual drive.
+        """Starts migartion on the virtual drive
 
         Args:
             option (str):
-            	add - adds the specified drives to the migrated raid
-            	remove - removes the specified drives from the migrated raid
+                            add - adds the specified drives to the migrated raid
+            	            remove - removes the specified drives from the migrated raid
             drives (str): specifies the list drives which needs to be added
                           or removed in storcli format ([e:]s|[e:]s-x|[e:]s-x,y])
             raid - raid level to which migration needs to be done (raid0, raid1, ...)
@@ -612,7 +614,7 @@ class VirtualDrive(object):
 
     @property
     def migrate_running(self):
-        """Check migrate process.
+        """Check if migration is running on a virtual drive
 
         Returns:
             (bool): true / false
@@ -646,20 +648,24 @@ class VirtualDrive(object):
 class VirtualDrives(object):
     """StorCLI virtual drives
 
-    Instance of this class is iterable with indexing
+    Instance of this class is iterable with :obj:VirtualDrive as item
 
     Args:
         ctl_id (str): controller id
         binary (str): storcli binary or full path to the binary
 
     Properties:
+        has_vds (bool): true if there are vds
         ids (list of str): list of virtual drives id
         ctl_id (str): virtual drives controller id
         ctl (:obj:controller.Controller): virtual drives controller
 
 
     Methods:
-        get_encl (:obj:VirtualDrive): return enclosure object by id
+        has_vd (bool): true if there are virtual drives
+        get_vd (:obj:VirtualDrive): get virtual drive object by id
+        get_named_vd (:obj:VirtualDrive): get virtual drive object by name
+
     """
 
     def __init__(self, ctl_id, binary='storcli64'):
@@ -717,8 +723,8 @@ class VirtualDrives(object):
             vd_id (str): virtual drive id
 
         Returns:
-            None: no virtual drive with id
-            :obj:`VirtualDrive`: virtual drive object
+            (None): no virtual drive with id
+            (:obj:VirtualDrive): virtual drive object
         """
         for vd in self:
             if vd.id == vd_id:
@@ -732,8 +738,8 @@ class VirtualDrives(object):
             vd_name (str): virtual drive name
 
         Returns:
-            None: no virtual drive with name
-            :obj:`VirtualDrive`: virtual drive object
+            (None): no virtual drive with name
+            (:obj:VirtualDrive): virtual drive object
         """
         for vd in self:
             if vd.name == vd_name:

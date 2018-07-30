@@ -24,24 +24,20 @@ class Controller(object):
     Properties:
         id (str): controller id
         name (str): controller cmd name
-        facts (dict): controller settings and other stuff
-        metrics (dict): controller metrics for monitoring
+        facts (dict): raw controller facts
+        metrics (:obj:ControllerMetrics): controller metrics
         vds (list of :obj:virtualdrive.VirtualDrives): controller virtual drives
         encls (:obj:enclosure.Enclosures): controller enclosures
 
     Methods:
-        create_vd (:obj:VirtualDrive): create virtual drive (raid)
-
-    Todo:
-        * Facts
-        * Metrics
+        create_vd (:obj:VirtualDrive): create virtual drive
 
     """
     def __init__(self, ctl_id, binary='storcli64'):
         """Constructor - create StorCLI Controller object
 
         Args:
-            ctl_id (srt): controller id
+            ctl_id (str): controller id
             binary (str): storcli binary or full path to the binary
         """
         self._ctl_id = ctl_id
@@ -70,7 +66,7 @@ class Controller(object):
 
     @property
     def facts(self):
-        """ (dict): controller settings and other stuff
+        """ (dict): raw controller facts
         """
         args = [
             'show',
@@ -80,13 +76,13 @@ class Controller(object):
 
     @property
     def metrics(self):
-        """ metrics (dict): controller metrics for monitoring
+        """(:obj:ControllerMetrics): controller metrics
         """
         pass
 
     @property
     def vds(self):
-        """(:obj:virtualdrive.VirtualDrives): controller virtual drives
+        """(:obj:virtualdrive.VirtualDrives): controllers virtual drives
         """
         return virtualdrive.VirtualDrives(ctl_id=self._ctl_id, binary=self._binary)
 
@@ -100,14 +96,14 @@ class Controller(object):
         """Create virtual drive (raid) managed by current controller
 
         Args:
-            name (str): raid name
-            raid (str): raid level (raid0, raid1, ...)
+            name (str): virtual drive name
+            raid (str): virtual drive raid level (raid0, raid1, ...)
             drives (str): storcli drives expression (e:s|e:s-x|e:s-x,y;e:s-x,y,z)
-            strip (str, optional): raid strip size
+            strip (str, optional): virtual drive raid strip size
 
         Returns:
-
-        Raises:
+            (None): no virtual drive created with name
+            (:obj:virtualdrive.VirtualDrive)
         """
         args = [
             'add',
@@ -128,7 +124,7 @@ class Controller(object):
 class Controllers(object):
     """StorCLI Controllers
 
-    Instance of this class is iterable
+    Instance of this class is iterable with :obj:Controller as item
 
     Args:
         binary (str): storcli binary or full path to the binary
@@ -137,7 +133,7 @@ class Controllers(object):
         ids (list of str): list of controllers id
 
     Methods:
-        get_clt (Controller): return controller object by id
+        get_clt (:obj:Controller): return controller object by id
     """
     def __init__(self, binary='storcli64'):
         """Constructor - create StorCLI Controllers object
@@ -174,8 +170,8 @@ class Controllers(object):
             ctl_id (str): controller id
 
         Returns:
-            None: no controller with id
-            :obj:`Controller`: controller object
+            (None): no controller with id
+            (:obj:Controller): controller object
         """
         for ctl in self:
             if ctl.id == ctl_id:

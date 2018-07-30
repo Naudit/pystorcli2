@@ -25,15 +25,11 @@ class Enclosure(object):
     Properties:
         id (str): enclosure id
         name (str): enclosure cmd name
-        facts (dict): enclosure settings and other stuff
-        metrics (dict): enclosure metrics for monitoring
+        facts (dict): raw enclosure facts
         ctl_id (str): enclosure controller
         ctl (:obj:controller.Controller): enclosure controller
+        has_drives (bool): true if enclosure has drives
         drives (list of :obj:drive.Drive): enclosure drives
-
-    Todo:
-        * Facts
-        * Metrics
     """
     def __init__(self, ctl_id, encl_id, binary='storcli64'):
         """Constructor - create StorCLI Enclosure object
@@ -67,7 +63,7 @@ class Enclosure(object):
 
     @property
     def facts(self):
-        """(dict): enclosure settings and other stuff
+        """(dict): raw enclosure facts
         """
         args = [
             'show',
@@ -123,7 +119,7 @@ class Enclosure(object):
 class Enclosures(object):
     """StorCLI enclosures
 
-    Instance of this class is iterable
+    Instance of this class is iterable with :obj:Enclosure as item
 
     Args:
         ctl_id (str): controller id
@@ -156,6 +152,7 @@ class Enclosures(object):
             '/c{0}/eall'.format(self._ctl_id),
             'show'
         ]
+
         out = self._storecli.run(args)
         return [encl['EID'] for encl in common.response_data(out)['Properties']]
 
@@ -192,8 +189,8 @@ class Enclosures(object):
             encl_id (str): enclosure id
 
         Returns:
-            None: no enclosure with id
-            :obj:`Enclosure`: enclosure object
+            (None): no enclosure with id
+            (:obj:Enclosure): enclosure object
         """
         for encl in self:
             if encl.id == encl_id:

@@ -12,9 +12,9 @@ from . import controller
 from . import enclosure
 
 class Drive(object):
-    """StorCLI enclosure
+    """StorCLI Drive
 
-    Instance of this class represents enclosure in StorCLI hierarchy
+    Instance of this class represents drive in StorCLI hierarchy
 
     Args:
         ctl_id (str): controller id
@@ -25,7 +25,7 @@ class Drive(object):
     Properties:
         id (str): drive id
         name (str): drive cmd name
-        facts (dict): drive settings and other stuff
+        facts (dict): raw drive facts
         metrics (dict): drive metrics for monitoring
         size (str): drive size
         interface (str): SATA / SAS
@@ -38,7 +38,7 @@ class Drive(object):
         linke_speed (str): drive connection link speed
         ctl_id (str): drive controller id
         ctl (:obj:controller.Controller): drive controller
-        encl_id (str): dirve enclosure
+        encl_id (str): drive enclosure
         encl (:obj:enclosure.Enclosure): drive enclosure
         phyerrorcounters (dict): drive error counters (also setter)
         state (str): drive state (also setter)
@@ -48,18 +48,20 @@ class Drive(object):
     Methods:
         init_start (dict): starts the initialization process on a drive
         init_stop (dict): stops an initialization process running on a drive
-        init_running (bool): check if init is running
-        init_progress (str): % progress of init
-        erase_start (dict): securely erases non-SED drives
+        init_running (bool): check if initialization is running on a drive
+        erase_start (dict): securely erases non-SED drive
         erase_stop (dict): stops an erase process running on a drive
-        erase_running (bool): check if erase is running
-        erase_progress (str): % progress of erase
-        hotparedrive_create (dict): create a hotspare drive
-        hotparedrive_delete (dict): delete a hotspare
+        erase_running (bool): check if erase is running on a drive
+        hotparedrive_create (dict): add drive to hotspares
+        hotparedrive_delete (dict): delete drive from hotspare
 
-    Todo:
-        * Facts
-        * Metrics
+    TODO:
+        Implement missing methods:
+            * start rebuild
+            * stop rebuild
+            * pause rebuild
+            * resume rebuild
+            * rebuild running
     """
     def __init__(self, ctl_id, encl_id, slot_id, binary='storcli64'):
         """Constructor - create StorCLI Drive object
@@ -105,7 +107,7 @@ class Drive(object):
 
     @property
     def facts(self):
-        """(dict): drive settings and other stuff
+        """(dict): raw drive facts
         """
         args = [
             'show',
@@ -115,7 +117,7 @@ class Drive(object):
 
     @property
     def metrics(self):
-        """(dict): drive metrics for monitoring
+        """(dict): drive metrics
         """
         pass
 
@@ -224,7 +226,7 @@ class Drive(object):
 
     @property
     def encl_id(self):
-        """(str): dirve enclosure
+        """(str): dirve enclosure id
         """
         return self._encl_id
 
@@ -235,7 +237,7 @@ class Drive(object):
         return enclosure.Enclosure(ctl_id=self._ctl_id, encl_id=self._encl_id, binary=self._binary)
 
     def init_start(self):
-        """Start Drive Initialization.
+        """Start initialization of a drive
 
         Returns:
             (dict): resposne cmd data
@@ -247,7 +249,7 @@ class Drive(object):
         return common.response_cmd(self._run(args))
 
     def init_stop(self):
-        """Stop Drive Initialization.
+        """Stop initialization on a drive
 
         A stopped initialization process cannot be resumed.
 
@@ -262,7 +264,7 @@ class Drive(object):
 
     @property
     def init_running(self):
-        """Check initialization process process.
+        """Check if initialization process is running on a drive
 
         Returns:
             (bool): true / false
@@ -291,7 +293,7 @@ class Drive(object):
         return bool(progress == '-')
 
     def erase_start(self, mode='simple'):
-        """Securely erases non-SED drives with specified erasepattern.
+        """Securely erases non-SED drives with specified erase pattern
 
         Args:
             mode (str):
@@ -314,7 +316,7 @@ class Drive(object):
         return common.response_cmd(self._run(args))
 
     def erase_stop(self):
-        """Stops secure erase.
+        """Stops the erase operation of a drive
 
         Returns:
             (dict): resposne cmd data
@@ -327,7 +329,7 @@ class Drive(object):
 
     @property
     def erase_running(self):
-        """Check erase process process.
+        """Check if erase process is running on a drive
 
         Returns:
             (bool): true / false
@@ -359,9 +361,9 @@ class Drive(object):
 
     @property
     def phyerrorcounters(self):
-        """Show/reset the drive phyerrorcounters
+        """Get/Reset the drive phyerrorcounters
 
-        Reset drive erro counters with (str) 0
+        Reset drive error counters with (str) 0
         """
         args = [
             'show',
@@ -381,7 +383,7 @@ class Drive(object):
 
     @property
     def state(self):
-        """Show/set drive state
+        """Get/Set drive state
 
         One of the following states can be set (str):
             online - changes the drive state to online
@@ -429,7 +431,7 @@ class Drive(object):
 
     @property
     def spin(self):
-        """Show/set drive spin status
+        """Get/Set drive spin status
 
         One of the following states can be set (str):
             up - spins up and set to unconfigured good
@@ -469,9 +471,9 @@ class Drive(object):
         Args:
             dgs (str): specifies the drive group to which the hotspare drive is dedicated (N|0,1,2...)
             enclaffinity (bool): Specifies the enclosure to which the hotspare is associated with.
-                                If this option is specified, affinity is set; if it is not specified, 
-                                there is no affinity.NOTE Affinity cannot be removed once it is set 
-                                for a hotspare drive.
+                                 If this option is specified, affinity is set; if it is not specified,
+                                 there is no affinity.NOTE Affinity cannot be removed once it is set
+                                 for a hotspare drive.
             nonrevertible (bool): sets the drive as a nonrevertible hotspare
 
         Returns:
@@ -491,7 +493,7 @@ class Drive(object):
         return common.response_cmd(self._run(args))
 
     def hotparedrive_delete(self):
-        """Delete a hotspare drive
+        """Deletes drive from hotspares
 
         Returns:
             (dict): resposne cmd data
