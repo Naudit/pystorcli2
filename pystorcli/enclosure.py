@@ -85,11 +85,28 @@ class Enclosure(object):
         return controller.Controller(ctl_id=self._ctl_id, binary=self._binary)
 
     @property
+    def has_drives(self):
+        """(bool): true if enclosure has drives
+        """
+        args = [
+            'show'
+        ]
+
+        pds = common.response_data(self._run(args))['Properties'][0]['PD']
+        if pds == "0":
+            return True
+        return False
+
+
+    @property
     def _slot_ids(self):
         args = [
             'show',
             'status'
         ]
+
+        if not self.has_drives:
+            return []
 
         status = common.response_data(self._run(args))['Enclosure /c{0}/e{1} '.format(self._ctl_id, self._encl_id)]
         return [drive['Slot'] for drive in status['Slot Info'] if drive['Status'] == "OK"]

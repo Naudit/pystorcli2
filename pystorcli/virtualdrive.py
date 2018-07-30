@@ -777,6 +777,14 @@ class VirtualDrives(object):
         """
         return controller.Controller(ctl_id=self._ctl_id, binary=self._binary)
 
+    @property
+    def has_vds(self):
+        """(bool): true if there are virtual drives
+        """
+        if self.ids:
+            return True
+        return False
+
     def get_vd(self, vd_id):
         """Get virtual drive object by id
 
