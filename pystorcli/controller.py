@@ -10,6 +10,7 @@ from . import StorCLI
 from . import common
 from . import enclosure
 from . import virtualdrive
+from . import exc
 
 
 class ControllerMetrics(object):
@@ -199,6 +200,8 @@ class Controller(object):
         self._storcli = StorCLI(binary)
         self._name = '/c{0}'.format(self._ctl_id)
 
+        self._exist()
+
     def __str__(self):
         return '{0}'.format(common.response_data(self._run(['show'])))
 
@@ -206,6 +209,12 @@ class Controller(object):
         args = args[:]
         args.insert(0, self._name)
         return self._storcli.run(args, **kwargs)
+
+    def _exist(self):
+        try:
+            self._run(['show'])
+        except exc.StorCliCmdError:
+            raise exc.StorCliMissingError(self.__class__.__name__, self._name)
 
     @property
     def id(self):

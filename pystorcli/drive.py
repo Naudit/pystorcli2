@@ -10,6 +10,7 @@ from . import StorCLI
 from . import common
 from . import controller
 from . import enclosure
+from . import exc
 
 
 class DriveMetrics(object):
@@ -241,6 +242,8 @@ class Drive(object):
         self._storcli = StorCLI(binary)
         self._name = '/c{0}/e{1}/s{2}'.format(self._ctl_id, self._encl_id, self._slot_id)
 
+        self._exist()
+
     @staticmethod
     def _response_properties(out):
         return common.response_data(out)['Drive Information'][0]
@@ -255,6 +258,12 @@ class Drive(object):
         args = args[:]
         args.insert(0, self._name)
         return self._storcli.run(args, **kwargs)
+
+    def _exist(self):
+        try:
+            self._run(['show'])
+        except exc.StorCliCmdError:
+            raise exc.StorCliMissingError(self.__class__.__name__, self._name)
 
     @property
     def id(self):

@@ -13,6 +13,7 @@ import shutil
 import subprocess
 
 from . import common
+from . import exc
 
 
 class StorCLI(object):
@@ -31,10 +32,10 @@ class StorCLI(object):
     def _binary(binary):
         """Verify and return full binary path
         """
-        binary = shutil.which(binary)
-        if not binary:
-            raise StorCliError("Cannot find storcli binary '%s' in path: %s" % (binary, os.environ['PATH']))
-        return binary
+        _bin = shutil.which(binary)
+        if not _bin:
+            raise exc.StorCliError("Cannot find storcli binary '%s' in path: %s" % (binary, os.environ['PATH']))
+        return _bin
 
     @staticmethod
     def check_response_status(cmd, out):
@@ -50,9 +51,9 @@ class StorCLI(object):
         cmd_status = common.response_cmd(out)
         if cmd_status['Status'] == 'Failure':
             if 'Detailed Status' in cmd_status:
-                raise StorCliCmdError(cmd, "{0}".format(cmd_status['Detailed Status']))
+                raise exc.StorCliCmdError(cmd, "{0}".format(cmd_status['Detailed Status']))
             else:
-                raise StorCliCmdError(cmd, "{0}".format(cmd_status))
+                raise exc.StorCliCmdError(cmd, "{0}".format(cmd_status))
 
     def run(self, args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs):
         """Execute storcli command line with arguments.
@@ -69,9 +70,9 @@ class StorCLI(object):
             dict: output data from command line
 
         Raises:
-            StorCliCmdError
-            StorCliRunTimeError
-            StorCliRunTimeout
+            exc.StorCliCmdError
+            exc.StorCliRunTimeError
+            exc.StorCliRunTimeout
         """
         cmd = [self._storcli]
         cmd.extend(args)
@@ -88,56 +89,8 @@ class StorCLI(object):
             except json.JSONDecodeError:
                 # :/
                 err = re.search('(^.*)Storage.*Command.*$', ret.stdout, re.MULTILINE | re.DOTALL).group(1)
-                raise StorCliCmdError(cmd, err)
+                raise exc.StorCliCmdError(cmd, err)
         except subprocess.TimeoutExpired as err:
-            raise StorCliRunTimeout(err)
+            raise exc.StorCliRunTimeout(err)
         except subprocess.SubprocessError as err:
-            raise StorCliRunTimeError(err)
-
-
-class StorCliError(Exception):
-    """StorCLI general exception
-    """
-    pass
-
-
-class StorCliCmdError(StorCliError):
-    """StorCLI command output error
-    """
-    def __init__(self, cmd, msg):
-        msg = msg.lstrip().rstrip()
-        super().__init__("Command '{0}' error: {1}".format(' '.join(cmd), msg))
-
-
-class StorCliRunError(StorCliError):
-    """StorCLI general subprocess exception
-    """
-    def __init__(self, ctx, *args, **kwargs):
-        super().__init__(ctx, *args, **kwargs)
-        self.cmd = ctx.cmd if isinstance(ctx, subprocess.SubprocessError) else ctx.args
-        self.stderr = ctx.stderr
-        self.stdout = ctx.stdout
-
-
-class StorCliRunTimeError(StorCliRunError):
-    """StorCLI subprocess ret code exception
-    """
-    def __init__(self, ctx, *args, **kwargs):
-        super().__init__(ctx, *args, **kwargs)
-        self.retcode = ctx.returncode if isinstance(ctx, subprocess.CalledProcessError) else None
-
-    def __str__(self):
-        return ("Command '{0}' returned with non-zero exit status "
-                "{1}: {2}".format(' '.join(self.cmd), self.retcode, self.stderr))
-
-
-class StorCliRunTimeout(StorCliError):
-    """StorCLI subprocess timeout exception
-    """
-    def __init__(self, ctx, *args, **kwargs):
-        super().__init__(ctx, *args, **kwargs)
-        self.timeout = ctx.timeout
-
-    def __str__(self):
-        return ("Command '{0}' timeout after "
-                "{1}: {2}, {3}".format(' '.join(self.cmd), self.timeout, self.stdout, self.stderr))
+            raise exc.StorCliRunTimeError(err)

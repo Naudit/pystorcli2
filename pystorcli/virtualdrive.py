@@ -10,7 +10,7 @@ from . import StorCLI
 from . import common
 from . import controller
 from . import drive
-
+from . import exc
 
 class VirtualDriveMetrics(object):
     """StorCLI VirtualDriveMerics
@@ -171,10 +171,18 @@ class VirtualDrive(object):
         self._storcli = StorCLI(binary)
         self._name = '/c{0}/v{1}'.format(self._ctl_id, self._vd_id)
 
+        self._exist()
+
     def _run(self, args, **kwargs):
         args = args[:]
         args.insert(0, self._name)
         return self._storcli.run(args, **kwargs)
+
+    def _exist(self):
+        try:
+            self._run(['show'])
+        except exc.StorCliCmdError:
+            raise exc.StorCliMissingError(self.__class__.__name__, self._name)
 
     @staticmethod
     def _response_properties(out):

@@ -8,6 +8,7 @@
 
 from . import StorCLI
 from . import common
+from . import exc
 
 
 class CacheVaultMetrics(object):
@@ -135,10 +136,18 @@ class CacheVault(object):
         self._storcli = StorCLI(binary)
         self._name = '/c{0}/cv'.format(self._ctl_id)
 
+        self._exist()
+
     def _run(self, args, **kwargs):
         args = args[:]
         args.insert(0, self._name)
         return self._storcli.run(args, **kwargs)
+
+    def _exist(self):
+        try:
+            self._run(['show'])
+        except exc.StorCliCmdError:
+            raise exc.StorCliMissingError(self.__class__.__name__, self._name)
 
     @property
     def facts(self):
