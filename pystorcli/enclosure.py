@@ -103,8 +103,8 @@ class Enclosure(object):
 
         pds = common.response_data(self._run(args))['Properties'][0]['PD']
         if pds == "0":
-            return True
-        return False
+            return False
+        return True
 
 
     @property
