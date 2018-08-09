@@ -8,7 +8,7 @@ def read(fname):
 
 setuptools.setup(
     name="pystorcli",
-    version="0.3.2",
+    version="0.3.3",
     author="Martin Dojcak",
     author_email="martin@dojcak.sk",
     description="StorCLI module wrapper",
@@ -16,7 +16,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Chillisystems/pystorcli",
     packages=setuptools.find_packages(),
-    scripts=['bin/pystorcli-metrics']
+    scripts=['bin/pystorcli-metrics'],
     classifiers=(
         "Programming Language :: Python :: 3",
         'Intended Audience :: Developers',
