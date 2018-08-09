@@ -137,7 +137,7 @@ class ControllerMetrics(object):
             if not encl.has_drives:
                 continue
             for drive in encl.drives:
-                if not drive.state in ('good', 'online'):
+                if not drive.state in ('good', 'online', 'ghs', 'dhs'):
                     if drive.state in drives:
                         drives[drive.state] += 1
                     else:
