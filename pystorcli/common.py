@@ -67,6 +67,22 @@ def lower(func):
     return wrapper
 
 
+def stringify(func):
+    """Decorator to convert obj to string.
+
+    Args:
+        func (func): function
+
+    Returns:
+        str: lower output of func
+    """
+    def wrapper(*args, **kwargs):
+        """func effective wrapper
+        """
+        return '{0}'.format(func(*args, **kwargs))
+    return wrapper
+
+
 def drives_from_expression(expr):
     """Generate list of drives from StorCLI drivers expression.
 

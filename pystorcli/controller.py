@@ -56,6 +56,7 @@ class ControllerMetrics(object):
         return self._show_all['HwCfg']
 
     @property
+    @common.stringify
     @common.lower
     def state(self):
         """(str): controller status (Needs Attention | Optimal | Failed | Unknown)
@@ -63,34 +64,38 @@ class ControllerMetrics(object):
         return self._status["Controller Status"]
 
     @property
+    @common.stringify
     def memory_correctable_error(self):
         """(str): number of controllers memory correctable errors
         """
         return self._status["Memory Correctable Errors"]
 
     @property
+    @common.stringify
     def memory_uncorrectable_error(self):
         """(str): number of controllers memory uncorrectable errors
         """
         return self._status["Memory Uncorrectable Errors"]
 
     @property
+    @common.stringify
     def drive_groups(self):
         """(str): number of drive groups on controller
         """
         data = self._show_all
         if 'Drive Groups' in data:
             return data["Drive Groups"]
-        return str(0)
+        return 0
 
     @property
+    @common.stringify
     def virtual_drives(self):
         """(str): number of virtual drives on controller
         """
         data = self._show_all
         if 'Virtual Drives' in data:
             return data["Virtual Drives"]
-        return str(0)
+        return 0
 
     @property
     def virtual_drives_non_optimal(self):
@@ -107,9 +112,12 @@ class ControllerMetrics(object):
                     vds[vd.state] += 1
                 else:
                     vds[vd.state] = 1
-        return vds
+
+        # convert counter to string
+        return {k: str(v) for k, v in vds.items()}
 
     @property
+    @common.stringify
     def physical_drives(self):
         """(str): number of physical drives on controller
         """
@@ -117,7 +125,7 @@ class ControllerMetrics(object):
 
         if 'Physical Drives' in data:
             return data["Physical Drives"]
-        return str(0)
+        return 0
 
     @property
     def physical_drives_non_optimal(self):
@@ -134,9 +142,13 @@ class ControllerMetrics(object):
                         drives[drive.state] += 1
                     else:
                         drives[drive.state] = 1
-        return drives
+
+        # convert counter to string
+        return {k: str(v) for k, v in drives.items()}
+
 
     @property
+    @common.stringify
     def roc_temperature(self):
         """(str): RAID-on-Chip temperature or unknown if absent
         """
@@ -146,6 +158,7 @@ class ControllerMetrics(object):
         return 'unknown'
 
     @property
+    @common.stringify
     def ctl_temperature(self):
         """(str): Controller temperature or unknown if absent
         """

@@ -54,13 +54,14 @@ class CacheVaultMetrics(object):
         return self._show_all['Firmware_Status']
 
     @property
+    @common.stringify
     def temperature(self):
         """(str): cache vault temperature in celsius
         """
         for key, value in self._response_property(self._info):
             if key == 'Temperature':
                 return value.split()[0]
-        return None
+        return 'unknown'
 
     @property
     @common.lower

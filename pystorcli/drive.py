@@ -63,6 +63,7 @@ class DriveMetrics(object):
     @property
     def state(self):
         """drive state
+
         Returns
             (str):
                 dhs - dedicated hotspare to some virtual drive
@@ -75,28 +76,32 @@ class DriveMetrics(object):
         return self._drive.state
 
     @property
+    @common.stringify
     def shield_errors(self):
         """(str): number of shield errors on drive
         """
-        return str(self._resposne_state['Shield Counter'])
+        return self._resposne_state['Shield Counter']
 
     @property
+    @common.stringify
     def media_errors(self):
         """(str): number of media errors on drive
         """
-        return str(self._resposne_state['Media Error Count'])
+        return self._resposne_state['Media Error Count']
 
     @property
+    @common.stringify
     def other_errors(self):
         """(str): number of other errors on drive
         """
-        return str(self._resposne_state['Other Error Count'])
+        return self._resposne_state['Other Error Count']
 
     @property
+    @common.stringify
     def predictive_failure(self):
         """predictive failure on drive
         """
-        return str(self._resposne_state['Predictive Failure Count'])
+        return self._resposne_state['Predictive Failure Count']
 
     @property
     def temperature(self):
@@ -112,6 +117,7 @@ class DriveMetrics(object):
         return self._resposne_state['S.M.A.R.T alert flagged by drive']
 
     @property
+    @common.stringify
     def init_progress(self):
         """Show initialization progress in percentage
 
@@ -129,6 +135,7 @@ class DriveMetrics(object):
         return progress
 
     @property
+    @common.stringify
     def rebuild_progress(self):
         """Show rebuild progress in percentage
 
@@ -146,6 +153,7 @@ class DriveMetrics(object):
         return progress
 
     @property
+    @common.stringify
     def erase_progress(self):
         """Show drive erase progress in percentage
 

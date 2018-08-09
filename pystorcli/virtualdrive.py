@@ -43,6 +43,7 @@ class VirtualDriveMetrics(object):
         return self._vd.state
 
     @property
+    @common.stringify
     def init_progress(self):
         """Show virtual drive initialization progress in perctentage
 
@@ -60,6 +61,7 @@ class VirtualDriveMetrics(object):
         return progress
 
     @property
+    @common.stringify
     def cc_progress(self):
         """Show virtual drive consistency check progress in perctentage
 
@@ -77,6 +79,7 @@ class VirtualDriveMetrics(object):
         return progress
 
     @property
+    @common.stringify
     def migrate_progress(self):
         """Show migrate progress of a virtual drive in percentage
 
