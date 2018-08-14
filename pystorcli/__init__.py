@@ -95,12 +95,13 @@ class StorCLI(object):
         Args:
             binary (str): storcli binary or full path to the binary
         """
-        self.binary = binary
-        self._storcli = self._binary(binary)
+        if _SINGLETON_MODULE_ENABLE and not hasattr(self, '_storcli'):
+            # do not override _storcli in singleton if already exist
+            self._storcli = self._binary(binary)
         if not _SINGLETON_MODULE_ENABLE:
-            # dont share singleton lock
+            # dont share singleton lock and binary
+            self._storcli = self._binary(binary)
             self.__cache_lock = threading.Lock()
-
 
     @property
     def cache_enable(self):
