@@ -57,7 +57,7 @@ class Enclosure(object):
         try:
             self._run(['show'])
         except exc.StorCliCmdError:
-            raise exc.StorCliMissingError(self.__class__.__name__, self._name)
+            raise exc.StorCliMissingError(self.__class__.__name__, self._name) from None
 
     @property
     def id(self):
