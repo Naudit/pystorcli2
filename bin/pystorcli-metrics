@@ -63,7 +63,9 @@ def drive_metrics(drive):
     """
     return {
         'metric': {
-            'state': drive.metrics.state
+            'state': drive.metrics.state,
+            'smart_alert': drive.metrics.smart_alert,
+            'predictive_failure': drive.metrics.predictive_failure
         }
     }
 
