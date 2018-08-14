@@ -110,15 +110,16 @@ class Enclosure(object):
     @property
     def _slot_ids(self):
         args = [
-            'show',
-            'status'
+            '/c{0}/e{1}/sall'.format(self._ctl_id, self._encl_id),
+            'show'
         ]
 
         if not self.has_drives:
             return []
 
-        status = common.response_data(self._run(args))['Enclosure /c{0}/e{1} '.format(self._ctl_id, self._encl_id)]
-        return [drive['Slot'] for drive in status['Slot Info'] if drive['Status'] == "OK"]
+
+        drives = common.response_data(self._storcli.run(args))['Drive Information']
+        return [drive['EID:Slt'].split(':')[1] for drive in drives]
 
     @property
     def drives(self):
