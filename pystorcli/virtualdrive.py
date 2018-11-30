@@ -394,6 +394,7 @@ class VirtualDrive(object):
         One of the following options can be set (str):
             on - enables PD Caching
             off - disables PD Caching
+            default - default PD Caching
 
         Returns:
             (str): on / off
@@ -406,7 +407,7 @@ class VirtualDrive(object):
         properties = self._response_properties_all(self._run(args))
         if properties['Disk Cache Policy'] == 'Enabled':
             return 'on'
-        elif properties['Disk Cache Policy'] == 'Default':
+        elif 'Default' in properties['Disk Cache Policy']:
             return 'default'
         return 'off'
 
