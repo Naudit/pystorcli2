@@ -1,6 +1,6 @@
 # PyStorCLI2
 
-PyStorCLI2 is an authorized and official fork from [PyStorCLI](https://github.com/Chillisystems/pystorcli). We have to thank original creator Martin Dojcak  for its contribution and original work.
+PyStorCLI2 official fork from [pystorcli](https://github.com/Chillisystems/pystorcli).
 
 # How to use PyStorCLI2:
 
