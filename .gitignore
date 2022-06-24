@@ -37,3 +37,4 @@ lib/python*
 
 # tests
 .coverage
+*.lcov

@@ -24,19 +24,24 @@ jobs:
           pip install .[dev]
       - name: Test with pytest
         run: pytest --cov-report term --cov=pystorcli
+      - name: Generate LCOV
+        run: coverage lcov
 
-      - name: Coveralls
-        uses: AndreMiras/coveralls-python-action@develop
+      - name: Coveralls Parallel
+        uses: coverallsapp/github-action@master
         if: matrix.os == 'ubuntu-latest'
         with:
+          github-token: ${{ secrets.github_token }}
+          flag-name: python-${{ matrix.python-version }}
+          path-to-lcov: coverage.lcov
           parallel: true
-          flag-name: Unit Test
 
-  coveralls_finish:
+  finish:
     needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Coveralls Finished
-        uses: AndreMiras/coveralls-python-action@develop
+        uses: coverallsapp/github-action@master
         with:
+          github-token: ${{ secrets.github_token }}
           parallel-finished: true
