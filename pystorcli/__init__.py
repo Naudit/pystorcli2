@@ -15,6 +15,7 @@ import subprocess
 
 from . import common
 from . import exc
+from .version import __version__
 
 
 _SINGLETON_MODULE_LOCK = threading.Lock()
