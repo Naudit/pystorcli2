@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2018, Martin Dojcak <martin@dojcak.sk>
+# Copyright (c) 2022, Rafael Leira & Naudit HPCN S.L. <rafael.leira@naudit.es>
 # See LICENSE for details.
 
 '''StorCLI drive python module
@@ -33,6 +34,7 @@ class DriveMetrics(object):
         erase_progress (str): % progress of erase on a drive
         all (dict): all metrics
     """
+
     def __init__(self, drive):
         """Constructor - create StorCLI DriveMetrics object
 
@@ -50,13 +52,14 @@ class DriveMetrics(object):
         return common.response_data(self._drive._run(args))
 
     @property
-    def  _resposne_state(self):
+    def _resposne_state(self):
         key_prefix = 'Drive /c{0}/e{1}/s{2}'.format(
             self._drive.ctl_id,
             self._drive.encl_id,
             self._drive.id
         )
-        detailed_info = self._show_all['{0} - Detailed Information'.format(key_prefix)]
+        detailed_info = self._show_all['{0} - Detailed Information'.format(
+            key_prefix)]
         detailed_state = detailed_info['{0} State'.format(key_prefix)]
         return detailed_state
 
@@ -234,6 +237,7 @@ class Drive(object):
             * resume rebuild
             * rebuild running
     """
+
     def __init__(self, ctl_id, encl_id, slot_id, binary='storcli64'):
         """Constructor - create StorCLI Drive object
 
@@ -248,7 +252,8 @@ class Drive(object):
         self._slot_id = slot_id
         self._binary = binary
         self._storcli = StorCLI(binary)
-        self._name = '/c{0}/e{1}/s{2}'.format(self._ctl_id, self._encl_id, self._slot_id)
+        self._name = '/c{0}/e{1}/s{2}'.format(self._ctl_id,
+                                              self._encl_id, self._slot_id)
 
         self._exist()
 
@@ -259,7 +264,8 @@ class Drive(object):
     def _response_attributes(self, out):
         detailed_info = ('Drive /c{0}/e{1}/s{2}'
                          ' - Detailed Information'.format(self._ctl_id, self._encl_id, self._slot_id))
-        attr = 'Drive /c{0}/e{1}/s{2} Device attributes'.format(self._ctl_id, self._encl_id, self._slot_id)
+        attr = 'Drive /c{0}/e{1}/s{2} Device attributes'.format(
+            self._ctl_id, self._encl_id, self._slot_id)
         return common.response_data(out)[detailed_info][attr]
 
     def _run(self, args, **kwargs):
@@ -271,7 +277,8 @@ class Drive(object):
         try:
             self._run(['show'])
         except exc.StorCliCmdError:
-            raise exc.StorCliMissingError(self.__class__.__name__, self._name) from None
+            raise exc.StorCliMissingError(
+                self.__class__.__name__, self._name) from None
 
     @property
     def id(self):

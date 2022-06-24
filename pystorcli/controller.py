@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2018, Martin Dojcak <martin@dojcak.sk>
+# Copyright (c) 2022, Rafael Leira & Naudit HPCN S.L. <rafael.leira@naudit.es>
 # See LICENSE for details.
 
 '''StorCLI controller python module
@@ -18,6 +19,7 @@ class ControllerMetrics(object):
 
     Instance of this class represents controller metrics
     """
+
     def __init__(self, ctl):
         """Constructor - create StorCLI ControllerMetrics object
 
@@ -146,7 +148,6 @@ class ControllerMetrics(object):
         # convert counter to string
         return {k: str(v) for k, v in drives.items()}
 
-
     @property
     @common.stringify
     def roc_temperature(self):
@@ -201,6 +202,7 @@ class Controller(object):
         create_vd (:obj:VirtualDrive): create virtual drive
 
     """
+
     def __init__(self, ctl_id, binary='storcli64'):
         """Constructor - create StorCLI Controller object
 
@@ -227,7 +229,8 @@ class Controller(object):
         try:
             self._run(['show'])
         except exc.StorCliCmdError:
-            raise exc.StorCliMissingError(self.__class__.__name__, self._name) from None
+            raise exc.StorCliMissingError(
+                self.__class__.__name__, self._name) from None
 
     @property
     def id(self):
@@ -312,6 +315,7 @@ class Controllers(object):
     Methods:
         get_clt (:obj:Controller): return controller object by id
     """
+
     def __init__(self, binary='storcli64'):
         """Constructor - create StorCLI Controllers object
 

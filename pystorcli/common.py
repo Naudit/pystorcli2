@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2018, Martin Dojcak <martin@dojcak.sk>
+# Copyright (c) 2022, Rafael Leira & Naudit HPCN S.L. <rafael.leira@naudit.es>
 # See LICENSE for details.
 
 '''Common
 '''
+
 
 def response_data(data):
     """StorCLI json output parser for respone data.
@@ -16,6 +18,7 @@ def response_data(data):
         dict: response data
     """
     return data['Controllers'][0]['Response Data']
+
 
 def response_property(data):
     """StorCLI json output parser for property.
@@ -29,6 +32,7 @@ def response_property(data):
     """
     return response_data(data)['Controller Properties']
 
+
 def response_cmd(data):
     """StorCLI json output parser for general cmd status.
 
@@ -40,16 +44,18 @@ def response_cmd(data):
     """
     return data['Controllers'][0]['Command Status']
 
+
 def response_setter(data):
     """StorCLI json output parser for set cmd status.
 
     Args:
         data (dict): formatted output data from command line
-        
+
     Returns:
         str: cmd detailed status value
     """
     return response_cmd(data)['Detailed Status'][0]['Value']
+
 
 def lower(func):
     """Decorator to lower returned function string.

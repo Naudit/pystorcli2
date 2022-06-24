@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2018, Martin Dojcak <martin@dojcak.sk>
+# Copyright (c) 2022, Rafael Leira & Naudit HPCN S.L. <rafael.leira@naudit.es>
 # See LICENSE for details.
 
 '''StorCLI cachevault python module
@@ -26,6 +27,7 @@ class CacheVaultMetrics(object):
         offload_status (str): check if cache vault has got space to cache offload
         all (dict): all metrics
     """
+
     def __init__(self, cv):
         """Constructor - create StorCLI CacheVaultMetrics object
 
@@ -94,7 +96,7 @@ class CacheVaultMetrics(object):
                     return 'ok'
                 else:
                     return 'fail'
-        return 'unknown'    
+        return 'unknown'
 
     @property
     def all(self):
@@ -125,6 +127,7 @@ class CacheVault(object):
         create_vd (:obj:VirtualDrive): create virtual drive
 
     """
+
     def __init__(self, ctl_id, binary='storcli64'):
         """Constructor - create StorCLI CacheVault object
 
@@ -148,11 +151,12 @@ class CacheVault(object):
         try:
             self._run(['show'])
         except exc.StorCliCmdError:
-            raise exc.StorCliMissingError(self.__class__.__name__, self._name) from None
+            raise exc.StorCliMissingError(
+                self.__class__.__name__, self._name) from None
 
     @property
     def facts(self):
-        args=[
+        args = [
             'show',
             'all'
         ]

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2018, Martin Dojcak <martin@dojcak.sk>
+# Copyright (c) 2022, Rafael Leira & Naudit HPCN S.L. <rafael.leira@naudit.es>
 # See LICENSE for details.
 
 '''StorCLI virtual virtual drive python module
@@ -11,6 +12,7 @@ from . import common
 from . import controller
 from . import drive
 from . import exc
+
 
 class VirtualDriveMetrics(object):
     """StorCLI VirtualDriveMerics
@@ -28,6 +30,7 @@ class VirtualDriveMetrics(object):
         erase_progress (str): % progress of erase on a virtual drive
         all (dict): all metrics
     """
+
     def __init__(self, vd):
         """Constructor - create StorCLI VirtualDriveMetrics object
 
@@ -55,7 +58,8 @@ class VirtualDriveMetrics(object):
             'init'
         ]
 
-        progress = self._vd._resposne_operation_status(self._vd._run(args))['Progress%']
+        progress = self._vd._resposne_operation_status(self._vd._run(args))[
+            'Progress%']
         if progress == '-':
             return "100"
         return progress
@@ -73,7 +77,8 @@ class VirtualDriveMetrics(object):
             'cc'
         ]
 
-        progress = self._vd._resposne_operation_status(self._vd._run(args))['Progress%']
+        progress = self._vd._resposne_operation_status(self._vd._run(args))[
+            'Progress%']
         if progress == '-':
             return "100"
         return progress
@@ -91,7 +96,8 @@ class VirtualDriveMetrics(object):
             'migrate'
         ]
 
-        progress = self._vd._resposne_operation_status(self._vd._run(args))['Progress%']
+        progress = self._vd._resposne_operation_status(self._vd._run(args))[
+            'Progress%']
         if progress == '-':
             return "100"
         return progress
@@ -160,6 +166,7 @@ class VirtualDrive(object):
             * resume cc
             * cc running
     """
+
     def __init__(self, ctl_id, vd_id, binary='storcli64'):
         """Constructor - create StorCLI VirtualDrive object
 
@@ -185,7 +192,8 @@ class VirtualDrive(object):
         try:
             self._run(['show'])
         except exc.StorCliCmdError:
-            raise exc.StorCliMissingError(self.__class__.__name__, self._name) from None
+            raise exc.StorCliMissingError(
+                self.__class__.__name__, self._name) from None
 
     @staticmethod
     def _response_properties(out):
@@ -280,7 +288,8 @@ class VirtualDrive(object):
             'all'
         ]
 
-        exposed = self._response_properties_all(self._run(args))['Exposed to OS']
+        exposed = self._response_properties_all(self._run(args))[
+            'Exposed to OS']
         return bool(exposed == 'Yes')
 
     @property
@@ -316,7 +325,8 @@ class VirtualDrive(object):
         ]
 
         drives = []
-        pds = common.response_data(self._run(args))['PDs for VD {0}'.format(self._vd_id)]
+        pds = common.response_data(self._run(args))[
+            'PDs for VD {0}'.format(self._vd_id)]
         for pd in pds:
             drive_encl_id, drive_slot_id = pd['EID:Slt'].split(':')
             drives.append(
@@ -654,7 +664,8 @@ class VirtualDrive(object):
             'erase'
         ]
 
-        progress = self._resposne_operation_status(self._run(args))['Progress%']
+        progress = self._resposne_operation_status(self._run(args))[
+            'Progress%']
         if progress == '-':
             return "100"
         return progress
@@ -681,7 +692,7 @@ class VirtualDrive(object):
 
         if force:
             args.append('force')
-        return  common.response_cmd(self._run(args))
+        return common.response_cmd(self._run(args))
 
     def migrate_start(self, option, drives, raid=None, force=False):
         """Starts migartion on the virtual drive
@@ -689,7 +700,7 @@ class VirtualDrive(object):
         Args:
             option (str):
                             add - adds the specified drives to the migrated raid
-            	            remove - removes the specified drives from the migrated raid
+                            remove - removes the specified drives from the migrated raid
             drives (str): specifies the list drives which needs to be added
                           or removed in storcli format ([e:]s|[e:]s-x|[e:]s-x,y])
             raid - raid level to which migration needs to be done (raid0, raid1, ...)
@@ -709,7 +720,7 @@ class VirtualDrive(object):
         ]
         if force:
             args.append('force')
-        return  common.response_cmd(self._run(args))
+        return common.response_cmd(self._run(args))
 
     @property
     def migrate_running(self):

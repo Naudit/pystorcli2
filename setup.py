@@ -1,7 +1,10 @@
-# Copyright 2018 Martin Dojcak
-# Copyright 2022 Rafael Leira, Naudit HPCN S.L.
+# -*- coding: utf-8 -*-
+#
+# Copyright (c) 2018, Martin Dojcak <martin@dojcak.sk>
+# Copyright (c) 2022, Rafael Leira & Naudit HPCN S.L. <rafael.leira@naudit.es>
 #
 # This program is licensed under BSD 3-clause license.
+# See LICENSE for details.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of

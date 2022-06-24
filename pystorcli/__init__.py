@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2018, Martin Dojcak <martin@dojcak.sk>
+# Copyright (c) 2022, Rafael Leira & Naudit HPCN S.L. <rafael.leira@naudit.es>
 # See LICENSE for details.
 
 '''StorCLI python module
@@ -35,7 +36,7 @@ def enable_singleton():
     Use StorCLI singleton across all objects. All pystorcli 
     class instances use their own StorCLI object. With enabled cache
     we can speedup for example metric lookups.
-    
+
     """
     _set_singleton(True)
 
@@ -85,7 +86,8 @@ class StorCLI(object):
         with _SINGLETON_MODULE_LOCK:
             if _SINGLETON_MODULE_ENABLE:
                 if StorCLI.__singleton_instance is None:
-                    StorCLI.__singleton_instance = super(StorCLI, cls).__new__(cls)
+                    StorCLI.__singleton_instance = super(
+                        StorCLI, cls).__new__(cls)
                 return StorCLI.__singleton_instance
             else:
                 return super(StorCLI, cls).__new__(cls)
@@ -148,7 +150,8 @@ class StorCLI(object):
         """
         _bin = shutil.which(binary)
         if not _bin:
-            raise exc.StorCliError("Cannot find storcli binary '%s' in path: %s" % (binary, os.environ['PATH']))
+            raise exc.StorCliError(
+                "Cannot find storcli binary '%s' in path: %s" % (binary, os.environ['PATH']))
         return _bin
 
     @staticmethod
@@ -165,7 +168,8 @@ class StorCLI(object):
         cmd_status = common.response_cmd(out)
         if cmd_status['Status'] == 'Failure':
             if 'Detailed Status' in cmd_status:
-                raise exc.StorCliCmdError(cmd, "{0}".format(cmd_status['Detailed Status']))
+                raise exc.StorCliCmdError(
+                    cmd, "{0}".format(cmd_status['Detailed Status']))
             else:
                 raise exc.StorCliCmdError(cmd, "{0}".format(cmd_status))
 
@@ -200,7 +204,8 @@ class StorCLI(object):
 
         with self.__cache_lock:
             try:
-                ret = subprocess.run(args=cmd, stdout=stdout, stderr=stderr, universal_newlines=True, **kwargs)
+                ret = subprocess.run(
+                    args=cmd, stdout=stdout, stderr=stderr, universal_newlines=True, **kwargs)
                 try:
                     ret_json = json.loads(ret.stdout)
                     self.check_response_status(cmd, ret_json)
@@ -210,7 +215,8 @@ class StorCLI(object):
                     return ret_json
                 except json.JSONDecodeError:
                     # :/
-                    err = re.search('(^.*)Storage.*Command.*$', ret.stdout, re.MULTILINE | re.DOTALL).group(1)
+                    err = re.search('(^.*)Storage.*Command.*$',
+                                    ret.stdout, re.MULTILINE | re.DOTALL).group(1)
                     raise exc.StorCliCmdError(cmd, err)
             except subprocess.TimeoutExpired as err:
                 raise exc.StorCliRunTimeout(err)

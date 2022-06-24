@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2018, Martin Dojcak <martin@dojcak.sk>
+# Copyright (c) 2022, Rafael Leira & Naudit HPCN S.L. <rafael.leira@naudit.es>
 # See LICENSE for details.
 
 '''StorCLI enclosure python module
@@ -32,6 +33,7 @@ class Enclosure(object):
         has_drives (bool): true if enclosure has drives
         drives (list of :obj:drive.Drive): enclosure drives
     """
+
     def __init__(self, ctl_id, encl_id, binary='storcli64'):
         """Constructor - create StorCLI Enclosure object
 
@@ -57,7 +59,8 @@ class Enclosure(object):
         try:
             self._run(['show'])
         except exc.StorCliCmdError:
-            raise exc.StorCliMissingError(self.__class__.__name__, self._name) from None
+            raise exc.StorCliMissingError(
+                self.__class__.__name__, self._name) from None
 
     @property
     def id(self):
@@ -106,7 +109,6 @@ class Enclosure(object):
             return False
         return True
 
-
     @property
     def _slot_ids(self):
         args = [
@@ -117,8 +119,8 @@ class Enclosure(object):
         if not self.has_drives:
             return []
 
-
-        drives = common.response_data(self._storcli.run(args))['Drive Information']
+        drives = common.response_data(self._storcli.run(args))[
+            'Drive Information']
         return [drive['EID:Slt'].split(':')[1] for drive in drives]
 
     @property
