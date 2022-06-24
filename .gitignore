@@ -34,3 +34,6 @@ lib/python*
 
 # editor
 *.swp
+
+# tests
+.coverage

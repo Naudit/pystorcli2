@@ -99,4 +99,11 @@ setup(
     scripts=['bin/pystorcli-metrics'],
     classifiers=CLASSIFIERS,
     install_requires=REQUIREMENTS,
+    extras_require={
+        'dev': [
+            # Requirements only needed for development
+            'pytest',
+            'pytest-cov',
+        ]
+    },
 )
