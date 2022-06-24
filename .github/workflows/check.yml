@@ -27,6 +27,7 @@ jobs:
 
       - name: Coveralls
         uses: AndreMiras/coveralls-python-action@develop
+        if: matrix.os == 'ubuntu-latest'
         with:
           parallel: true
           flag-name: Unit Test
