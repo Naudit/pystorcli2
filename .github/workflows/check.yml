@@ -28,12 +28,12 @@ jobs:
         run: pytest --cov-report term --cov=pystorcli
 
       - name: Generate LCOV
-        if: ${{ python-version != "3.6"}}
+        if: ${{ matrix.python-version != "3.6"}}
         run: coverage lcov
 
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@master
-        if: ${{ matrix.os == 'ubuntu-latest' && python-version != "3.6"}}
+        if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version != "3.6"}}
         with:
           github-token: ${{ secrets.github_token }}
           flag-name: python-${{ matrix.python-version }}
