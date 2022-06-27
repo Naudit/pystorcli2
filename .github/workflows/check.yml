@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -32,20 +32,25 @@ jobs:
         run: coverage lcov
 
       - name: Coveralls Parallel
-        uses: coverallsapp/github-action@master
         if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version != '3.6' }}
-        with:
-          github-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          flag-name: python-${{ matrix.python-version }}
-          path-to-lcov: coverage.lcov
-          parallel: true
+        run: coveralls --service=github
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_FLAG_NAME: ${{ matrix.test-name }}
+          COVERALLS_PARALLEL: true
 
   finish:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Coveralls Finished
-        uses: coverallsapp/github-action@master
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
         with:
-          github-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          parallel-finished: true
+          python-version: "3.10"
+      - name: Install coveralls
+        run: pip install .[dev]
+      - name: Finished
+        run: coveralls --service=github --finish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

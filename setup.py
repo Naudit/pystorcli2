@@ -104,6 +104,7 @@ setup(
             # Requirements only needed for development
             'pytest',
             'pytest-cov',
+            'coveralls',
         ]
     },
 )
