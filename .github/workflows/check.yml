@@ -50,7 +50,7 @@ jobs:
           python-version: "3.10"
       - name: Install coveralls
         run: pip install .[dev]
-      - name: Finished
+      - name: Submit coveralls
         run: coveralls --service=github --finish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
