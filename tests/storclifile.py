@@ -28,7 +28,7 @@ class StorcliCMDFile(CMDRunner):
         self.storcli_path = storcli_path
         self.options: List[str] = options
 
-    def run(self, args, pass_options=False, **kwargs) -> subprocess.CompletedProcess[str]:
+    def run(self, args, pass_options=False, **kwargs) -> subprocess.CompletedProcess:
         """Runs a command and returns the output.
         """
 

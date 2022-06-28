@@ -16,7 +16,7 @@ class CMDRunner():
     """This is a simple wrapper for subprocess.Popen()/subprocess.run(). The main idea is to inherit this class and create easy mockable tests.
     """
 
-    def run(self, args, **kwargs) -> subprocess.CompletedProcess[str]:
+    def run(self, args, **kwargs) -> subprocess.CompletedProcess:
         """Runs a command and returns the output.
         """
         return subprocess.run(args, **kwargs)
