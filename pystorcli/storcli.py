@@ -16,6 +16,7 @@ import subprocess
 
 from . import common
 from . import exc
+from . import cmdRunner
 
 _SINGLETON_STORCLI_MODULE_LOCK = threading.Lock()
 _SINGLETON_STORCLI_MODULE_ENABLE = False
@@ -46,6 +47,7 @@ class StorCLI(object):
     __cache_lock = threading.Lock()
     __cache_enabled = False
     __response_cache = {}
+    __cmdrunner = None
 
     def __new__(cls, *args, **kwargs):
         """Thread safe singleton
@@ -60,12 +62,15 @@ class StorCLI(object):
             else:
                 return super(StorCLI, cls).__new__(cls)
 
-    def __init__(self, binary='storcli64'):
+    def __init__(self, binary='storcli64', cmdrunner=cmdRunner.CMDRunner()):
         """Constructor - create StorCLI object wrapper
 
         Args:
             binary (str): storcli binary or full path to the binary
         """
+
+        self.__cmdrunner = cmdrunner
+
         if _SINGLETON_STORCLI_MODULE_ENABLE and not hasattr(self, '_storcli'):
             # do not override _storcli in singleton if already exist
             self._storcli = self._binary(binary)
@@ -172,7 +177,7 @@ class StorCLI(object):
 
         with self.__cache_lock:
             try:
-                ret = subprocess.run(
+                ret = self.__cmdrunner.run(
                     args=cmd, stdout=stdout, stderr=stderr, universal_newlines=True, **kwargs)
                 try:
                     ret_json = json.loads(ret.stdout)
