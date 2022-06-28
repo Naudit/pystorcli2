@@ -23,13 +23,13 @@ def read_file(path):
         return fp.read()
 
 
-def _get_version_match(content):
+def _get_version_match(content, path=''):
     # Search for lines of the form: # __version__ = 'ver'
     regex = r"^__version__ = ['\"]([^'\"]*)['\"]"
     version_match = re.search(regex, content, re.M)
     if version_match:
         return version_match.group(1)
-    raise RuntimeError("Unable to find version string in '__init__.py'.")
+    raise RuntimeError(f"Unable to find version string in '{path}'.")
 
 
 def get_version(path):
@@ -46,14 +46,14 @@ def get_version(path):
 
     except Exception as e:
         print(e)
-        return _get_version_match(read_file(path))
+        return _get_version_match(read_file(path), path)
 
 
 def write_version(path):
     '''
     Write the version on variavle __version__ in version.py and returns the version
     '''
-    version = get_version(os.path.join(path, '__init__.py'))
+    version = get_version(os.path.join(path, 'version.py'))
 
     with open(os.path.join(path, 'version.py'), 'w') as f:
         f.write('__version__ = "{}"\n'.format(version))
