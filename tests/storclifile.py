@@ -42,15 +42,17 @@ class StorcliCMDFile(CMDRunner):
         filename = os.path.join(
             self.storcli_path, re.sub('[/\\\\:]', '_', filename))
 
-        logger.trace("Opening file: {0}".format(filename))
+        filename = filename+'.json'
+
+        logger.debug("Opening file: {0}".format(filename))
 
         try:
             with open(filename) as f:
-                raw_data = f.readlines()
+                raw_data = f.read()
         except:
             raise StorclifileSampleNotFound(filename, final_params)
 
-        _stdout = [i.split('\n')[0] for i in raw_data]
+        _stdout = raw_data
 
         ret = subprocess.CompletedProcess[str](args, 0, _stdout, None)
 

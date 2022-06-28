@@ -6,8 +6,12 @@
 #
 ################################################################
 
+import re
+
+
 class StorclifileSampleNotFound(Exception):
     def __init__(self, path, args=[]):
         args_str = ' '.join(args)
+        args_str = re.sub('.json', '', args_str)
         super().__init__(
-            f'Smartctlmockup didn\'t found requested file on {path}. This might be the simulating the call of "smartctl {args_str}"')
+            f'pyStorCLImockup didn\'t found requested file on {path}. This might be the simulating the call of "storcli {args_str}"')

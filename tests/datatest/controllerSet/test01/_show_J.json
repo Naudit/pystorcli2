@@ -1,0 +1,53 @@
+{
+"Controllers":[
+{
+	"Command Status" : {
+		"CLI Version" : "007.1704.0000.0000 Jan 16, 2021",
+		"Operating system" : "Linux 5.15.0-37-generic",
+		"Status Code" : 0,
+		"Status" : "Success",
+		"Description" : "None"
+	},
+	"Response Data" : {
+		"Number of Controllers" : 2,
+		"Host Name" : "sonda-naudit-dev-201800637",
+		"Operating System " : "Linux 5.15.0-37-generic",
+		"System Overview" : [
+			{
+				"Ctl" : 0,
+				"Model" : "Intel(R)RAIDControllerRS3DC080",
+				"Ports" : 8,
+				"PDs" : 36,
+				"DGs" : 3,
+				"DNOpt" : 0,
+				"VDs" : 3,
+				"VNOpt" : 0,
+				"BBU" : "N/A",
+				"sPR" : "Off",
+				"DS" : "1&2",
+				"EHS" : "N",
+				"ASOs" : 3,
+				"Hlth" : "Opt"
+			},
+			{
+				"Ctl" : 1,
+				"Model" : "Intel(R)RAIDControllerRS3DC080",
+				"Ports" : 8,
+				"PDs" : 36,
+				"DGs" : 3,
+				"DNOpt" : 0,
+				"VDs" : 3,
+				"VNOpt" : 0,
+				"BBU" : "N/A",
+				"sPR" : "Off",
+				"DS" : "1&2",
+				"EHS" : "N",
+				"ASOs" : 3,
+				"Hlth" : "Opt"
+			}
+		]
+	}
+}
+]
+}
+

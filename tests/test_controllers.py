@@ -11,6 +11,8 @@ import os
 import pytest
 
 from pystorcli import StorCLI
+from pystorcli import Controller, Controllers
+from .baseTest import TestStorcliMainClass
 
 # discover tests
 
@@ -20,17 +22,14 @@ folders = [dataset_main_path +
            p for p in os.listdir(dataset_main_path)]
 
 
-class TestSingleDevice():
-
-    def get_device_data(self, folder: str):
-        with open(os.path.join(folder, 'device.json')) as json_file:
-            data = json.load(json_file)
-
-        return data
+class TestControllers(TestStorcliMainClass):
 
     @pytest.mark.parametrize("folder", folders)
-    def test_init_pystorcli(self, folder):
-        try:
-            storcli = StorCLI()
-        except:
-            pass
+    def test_count_controllers(self, folder):
+        # setup env
+        device_data = self.setupEnv(folder)
+
+        # List controllers
+        controllers = Controllers()
+
+        assert len(controllers.ids) > 0

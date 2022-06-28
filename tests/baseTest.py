@@ -9,6 +9,7 @@
 import json
 import os
 from typing import List
+from pystorcli import StorCLI
 from .storclifile import StorcliCMDFile
 
 
@@ -22,3 +23,12 @@ class TestStorcliMainClass():
 
     def get_cmdRunner(self, folder: str, options: List[str] = []):
         return StorcliCMDFile(folder, options)
+
+    def setupEnv(self, folder: str):
+        # get cmdRunner
+        cmdRunner = self.get_cmdRunner(folder)
+
+        StorCLI.enable_singleton()
+        r = StorCLI(cmdrunner=cmdRunner)
+
+        return self.get_device_data(folder)

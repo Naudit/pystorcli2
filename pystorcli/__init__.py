@@ -9,3 +9,4 @@
 
 from .version import __version__
 from .storcli import StorCLI
+from .controller import Controller, Controllers

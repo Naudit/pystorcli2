@@ -69,15 +69,19 @@ class StorCLI(object):
             binary (str): storcli binary or full path to the binary
         """
 
-        self.__cmdrunner = cmdrunner
+        if _SINGLETON_STORCLI_MODULE_ENABLE:
+            if not hasattr(self, '_storcli'):
+                # do not override _storcli in singleton if already exist
+                self._storcli = cmdrunner.binaryCheck(binary)
+            if self.__cmdrunner is None:
+                # do not override __cmdrunner in singleton if already exist
+                self.__cmdrunner = cmdrunner
 
-        if _SINGLETON_STORCLI_MODULE_ENABLE and not hasattr(self, '_storcli'):
-            # do not override _storcli in singleton if already exist
-            self._storcli = cmdrunner.binaryCheck(binary)
         if not _SINGLETON_STORCLI_MODULE_ENABLE:
             # dont share singleton lock and binary
             self._storcli = cmdrunner.binaryCheck(binary)
             self.__cache_lock = threading.Lock()
+            self.__cmdrunner = cmdrunner
 
     @property
     def cache_enable(self):

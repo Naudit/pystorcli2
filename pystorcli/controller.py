@@ -13,6 +13,8 @@ from . import enclosure
 from . import virtualdrive
 from . import exc
 
+from typing import List
+
 
 class ControllerMetrics(object):
     """StorCLI Controller Metrics
@@ -326,7 +328,7 @@ class Controllers(object):
         self._storcli = StorCLI(binary)
 
     @property
-    def _ctl_ids(self):
+    def _ctl_ids(self) -> List[str]:
         out = self._storcli.run(['show'])
         return [ctl['Ctl'] for ctl in common.response_data(out)['System Overview']]
 
