@@ -6,7 +6,10 @@
 '''CMDRunner
 '''
 
+import os
+import shutil
 import subprocess
+from . import exc
 
 
 class CMDRunner():
@@ -17,3 +20,12 @@ class CMDRunner():
         """Runs a command and returns the output.
         """
         return subprocess.run(args, **kwargs)
+
+    def binaryCheck(self, binary):
+        """Verify and return full binary path
+        """
+        _bin = shutil.which(binary)
+        if not _bin:
+            raise exc.StorCliError(
+                "Cannot find storcli binary '%s' in path: %s" % (binary, os.environ['PATH']))
+        return _bin

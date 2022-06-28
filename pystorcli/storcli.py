@@ -73,10 +73,10 @@ class StorCLI(object):
 
         if _SINGLETON_STORCLI_MODULE_ENABLE and not hasattr(self, '_storcli'):
             # do not override _storcli in singleton if already exist
-            self._storcli = self._binary(binary)
+            self._storcli = cmdrunner.binaryCheck(binary)
         if not _SINGLETON_STORCLI_MODULE_ENABLE:
             # dont share singleton lock and binary
-            self._storcli = self._binary(binary)
+            self._storcli = cmdrunner.binaryCheck(binary)
             self.__cache_lock = threading.Lock()
 
     @property
@@ -116,16 +116,6 @@ class StorCLI(object):
     def cache(self, value):
         with self.__cache_lock:
             self.__response_cache = value
-
-    @staticmethod
-    def _binary(binary):
-        """Verify and return full binary path
-        """
-        _bin = shutil.which(binary)
-        if not _bin:
-            raise exc.StorCliError(
-                "Cannot find storcli binary '%s' in path: %s" % (binary, os.environ['PATH']))
-        return _bin
 
     @staticmethod
     def check_response_status(cmd, out):
@@ -222,7 +212,7 @@ class StorCLI(object):
         StorCLI.__set_singleton(False)
 
     @staticmethod
-    def is_singleton():
+    def is_singleton() -> bool:
         """Check if singleton is enabled
         """
         return _SINGLETON_STORCLI_MODULE_ENABLE
