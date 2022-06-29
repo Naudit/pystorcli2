@@ -330,7 +330,12 @@ class Controllers(object):
     @property
     def _ctl_ids(self) -> List[str]:
         out = self._storcli.run(['show'])
-        return [ctl['Ctl'] for ctl in common.response_data(out)['System Overview']]
+        response = common.response_data(out)
+
+        if "Number of Controllers" in response and response["Number of Controllers"] == 0:
+            return []
+        else:
+            return [ctl['Ctl'] for ctl in common.response_data(out)['System Overview']]
 
     @property
     def _ctls(self):
