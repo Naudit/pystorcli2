@@ -32,4 +32,5 @@ class TestControllers(TestStorcliMainClass):
         # List controllers
         controllers = Controllers()
 
-        assert len(controllers.ids) > 0
+        if "Controller_ids" in device_data:
+            assert controllers.ids == device_data["Controller_ids"]
