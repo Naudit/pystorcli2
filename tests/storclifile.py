@@ -54,7 +54,7 @@ class StorcliCMDFile(CMDRunner):
 
         _stdout = raw_data
 
-        ret = subprocess.CompletedProcess[str](args, 0, _stdout, None)
+        ret = subprocess.CompletedProcess(args, 0, _stdout, None)
 
         return ret
 
