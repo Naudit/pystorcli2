@@ -10,3 +10,6 @@
 from .version import __version__
 from .storcli import StorCLI
 from .controller import Controller, Controllers
+from .enclosure import Enclosure, Enclosures
+from .drive import Drive
+from .virtualdrive import VirtualDrive, VirtualDrives
