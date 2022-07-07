@@ -222,3 +222,26 @@ class StorCLI(object):
         """Check if singleton is enabled
         """
         return _SINGLETON_STORCLI_MODULE_ENABLE
+
+    @property
+    def full_version(self) -> str:
+        """Get storcli version as storcli returns
+        """
+        out = self.run(['show'])
+        version = common.response_cmd(out)['CLI Version']
+
+        return version
+
+    @property
+    def version(self) -> str:
+        """Get storcli version in a cleaner way
+        """
+        import re
+
+        # Remove duplicated 0s
+        first_clean = re.sub('0+', '0', self.full_version.split(' ')[0])
+
+        # Remove leading 0s
+        second_clean = re.sub('^0+', '', first_clean)
+
+        return second_clean
