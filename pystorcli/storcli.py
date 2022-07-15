@@ -62,18 +62,20 @@ class StorCLI(object):
             else:
                 return super(StorCLI, cls).__new__(cls)
 
-    def __init__(self, binary='storcli64', cmdrunner=None):
+    def __init__(self, binary='storcli64', cmdrunner: cmdRunner.CMDRunner = None):
         """Constructor - create StorCLI object wrapper
 
         Args:
             binary (str): storcli binary or full path to the binary
         """
 
-        if cmdrunner is None:
-            if self.__cmdrunner is None:
-                self.__cmdrunner = cmdRunner.CMDRunner()
-        else:
-            self.__cmdrunner = cmdrunner
+        if not _SINGLETON_STORCLI_MODULE_ENABLE or (_SINGLETON_STORCLI_MODULE_ENABLE and (not hasattr(self, '_StorCLI__cmdrunner') or self.__cmdrunner is None)):
+            # Do not override __cmdrunner if it is already set in singleton mode
+            if cmdrunner is None:
+                if self.__cmdrunner is None:
+                    self.__cmdrunner = cmdRunner.CMDRunner()
+            else:
+                self.__cmdrunner = cmdrunner
 
         if _SINGLETON_STORCLI_MODULE_ENABLE:
             if not hasattr(self, '_storcli'):
@@ -84,6 +86,13 @@ class StorCLI(object):
             # dont share singleton lock and binary
             self._storcli = self.__cmdrunner.binaryCheck(binary)
             self.__cache_lock = threading.Lock()
+
+    def set_cmdrunner(self, cmdrunner: cmdRunner.CMDRunner):
+        """
+        Set command runner object.
+        This is only useful for testing.
+        """
+        self.__cmdrunner = cmdrunner
 
     @property
     def cache_enable(self):

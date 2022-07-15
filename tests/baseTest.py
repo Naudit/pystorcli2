@@ -30,5 +30,8 @@ class TestStorcliMainClass():
 
         StorCLI.enable_singleton()
         r = StorCLI(cmdrunner=cmdRunner)
+        r.clear_cache()
+        # Conflirm cmdRunner is set properly
+        r.set_cmdrunner(cmdRunner)
 
         return self.get_device_data(folder)
