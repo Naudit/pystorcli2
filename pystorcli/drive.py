@@ -11,7 +11,10 @@ from . import StorCLI
 from . import common
 from . import controller
 from . import enclosure
+from . import virtualdrive
 from . import exc
+
+from typing import Union
 
 
 class DriveMetrics(object):
@@ -422,6 +425,28 @@ class Drive(object):
         """(:obj:enclosure.Enclosure): drive enclosure
         """
         return enclosure.Enclosure(ctl_id=self._ctl_id, encl_id=self._encl_id, binary=self._binary)
+
+    @property
+    def vd_id(self) -> Union[None, int]:
+        """(int): drive virtual drive id if any
+        """
+        args = [
+            'show']
+        dg = self._response_properties(self._run(args))['DG']
+
+        if isinstance(dg, int):
+            return dg
+        else:
+            return None
+
+    @property
+    def vd(self) -> Union[None, virtualdrive.VirtualDrive]:
+        """(:obj:virtualdrive.VirtualDrive): get the virtual drive if any
+        """
+        if self.vd_id is None:
+            return None
+        else:
+            return virtualdrive.VirtualDrive(self._ctl_id, self.vd_id, self._binary)
 
     def init_start(self):
         """Start initialization of a drive
