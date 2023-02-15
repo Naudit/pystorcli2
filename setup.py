@@ -95,7 +95,7 @@ setup(
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
     url="https://github.com/Naudit/pystorcli2",
-    packages=['pystorcli2'],
+    packages=['pystorcli2', 'pystorcli'],
     scripts=['bin/pystorcli-metrics'],
     classifiers=CLASSIFIERS,
     install_requires=REQUIREMENTS,
