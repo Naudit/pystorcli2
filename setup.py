@@ -88,14 +88,14 @@ CLASSIFIERS = [
 
 setup(
     name="PyStorCLI2",
-    version=write_version('pystorcli'),
+    version=write_version('pystorcli2'),
     author="Rafael Leira",
     author_email="rafael.leira@naudit.es",
     description="StorCLI module wrapper 2",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
     url="https://github.com/Naudit/pystorcli2",
-    packages=['pystorcli'],
+    packages=['pystorcli2'],
     scripts=['bin/pystorcli-metrics'],
     classifiers=CLASSIFIERS,
     install_requires=REQUIREMENTS,

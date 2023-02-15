@@ -9,7 +9,7 @@
 import json
 import os
 from typing import List
-from pystorcli import StorCLI
+from pystorcli2 import StorCLI
 from .storclifile import StorcliCMDFile
 
 

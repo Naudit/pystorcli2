@@ -10,8 +10,8 @@ import json
 import os
 import pytest
 
-from pystorcli import StorCLI
-from pystorcli import Controller, Controllers
+from pystorcli2 import StorCLI
+from pystorcli2 import Controller, Controllers
 from .baseTest import TestStorcliMainClass
 
 # discover tests

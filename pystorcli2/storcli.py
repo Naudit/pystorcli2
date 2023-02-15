@@ -13,7 +13,7 @@ import json
 import shutil
 import threading
 import subprocess
-import pystorcli
+import pystorcli2
 
 from . import common
 from . import exc
@@ -257,7 +257,7 @@ class StorCLI(object):
         return second_clean
 
     @property
-    def controllers(self) -> 'pystorcli.controllers.Controllers':
+    def controllers(self) -> 'pystorcli2.controllers.Controllers':
         """Get list of controllers
         """
         from . import Controllers

@@ -10,7 +10,7 @@ import json
 import os
 import pytest
 
-from pystorcli import StorCLI
+from pystorcli2 import StorCLI
 from .baseTest import TestStorcliMainClass
 
 
@@ -49,7 +49,7 @@ class TestStorcliMainClass(TestStorcliMainClass):
 
     @pytest.mark.parametrize("folder", folders)
     def test_init_invalid_exec(self, folder):
-        from pystorcli.exc import StorCliError
+        from pystorcli2.exc import StorCliError
 
         StorCLI.disable_singleton()
 

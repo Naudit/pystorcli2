@@ -10,7 +10,7 @@
 import re
 import os
 import subprocess
-from pystorcli.cmdRunner import CMDRunner
+from pystorcli2.cmdRunner import CMDRunner
 from .exceptions import StorclifileSampleNotFound
 from typing import Union, Tuple, List
 
