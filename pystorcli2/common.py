@@ -73,6 +73,38 @@ def lower(func):
     return wrapper
 
 
+def upper(func):
+    """Decorator to upper returned function string.
+
+    Args:
+        func (func): function
+
+    Returns:
+        str: upper output of func
+    """
+    def wrapper(*args, **kwargs):
+        """func effective wrapper
+        """
+        return func(*args, **kwargs).upper()
+    return wrapper
+
+
+def strip(func):
+    """Decorator to strip returned function string. It will be stripped both sides.
+
+    Args:
+        func (func): function
+
+    Returns:
+        str: stripped output of func
+    """
+    def wrapper(*args, **kwargs):
+        """func effective wrapper
+        """
+        return func(*args, **kwargs).strip()
+    return wrapper
+
+
 def stringify(func):
     """Decorator to convert obj to string.
 

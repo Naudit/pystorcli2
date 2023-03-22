@@ -116,7 +116,7 @@ class DriveMetrics(object):
         return self._resposne_state['Drive Temperature'].split('C')[0].lstrip()
 
     @property
-    @common.lower
+    @common.upper
     def smart_alert(self):
         """(str): S.M.A.R.T alert flag on drive
         """
@@ -321,7 +321,7 @@ class Drive(object):
         return self._response_properties(self._run(args))['Size']
 
     @property
-    @common.lower
+    @common.upper
     def interface(self):
         """(str): SATA / SAS
         """
@@ -331,7 +331,7 @@ class Drive(object):
         return self._response_properties(self._run(args))['Intf']
 
     @property
-    @common.lower
+    @common.upper
     def medium(self):
         """(str): SSD / HDD
         """
@@ -341,7 +341,8 @@ class Drive(object):
         return self._response_properties(self._run(args))['Med']
 
     @property
-    @common.lower
+    @common.upper
+    @common.strip
     def model(self):
         """(str): drive model informations
         """
@@ -351,6 +352,8 @@ class Drive(object):
         return self._response_properties(self._run(args))['Model']
 
     @property
+    @common.upper
+    @common.strip
     def serial(self):
         """(str): drive serial number
         """
@@ -361,7 +364,7 @@ class Drive(object):
         return self._response_attributes(self._run(args))['SN']
 
     @property
-    @common.lower
+    @common.upper
     def wwn(self):
         """(str): drive wwn
         """
@@ -372,7 +375,7 @@ class Drive(object):
         return self._response_attributes(self._run(args))['WWN']
 
     @property
-    @common.lower
+    @common.upper
     def firmware(self):
         """(str): drive firmware version
         """
