@@ -25,13 +25,22 @@ class TestStorcliMainClass():
         return StorcliCMDFile(folder, options)
 
     def setupEnv(self, folder: str):
+        # Check if storcli exists in self
+        if hasattr(self, 'storcli'):
+            return
+
         # get cmdRunner
         cmdRunner = self.get_cmdRunner(folder)
 
         StorCLI.enable_singleton()
-        r = StorCLI(cmdrunner=cmdRunner)
-        r.clear_cache()
+        self.storcli = StorCLI(cmdrunner=cmdRunner)
+        self.storcli.clear_cache()
         # Conflirm cmdRunner is set properly
-        r.set_cmdrunner(cmdRunner)
+        self.storcli.set_cmdrunner(cmdRunner)
 
         return self.get_device_data(folder)
+
+    def get_storcli(self, folder: str):
+        self.setupEnv(folder)
+
+        return self.storcli

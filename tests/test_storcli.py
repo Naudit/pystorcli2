@@ -21,7 +21,7 @@ folders = [dataset_main_path +
            p for p in os.listdir(dataset_main_path)]
 
 
-class TestStorcliMainClass(TestStorcliMainClass):
+class TestStorcli(TestStorcliMainClass):
 
     @pytest.mark.parametrize("folder", folders)
     def test_init_disable_singleton(self, folder):

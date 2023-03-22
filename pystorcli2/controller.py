@@ -13,7 +13,7 @@ from . import enclosure
 from . import virtualdrive
 from . import exc
 
-from typing import List
+from typing import List, Optional
 
 
 class ControllerMetrics(object):
@@ -274,7 +274,7 @@ class Controller(object):
         """
         return enclosure.Enclosures(ctl_id=self._ctl_id, binary=self._binary)
 
-    def create_vd(self, name, raid, drives, strip='64'):
+    def create_vd(self, name: str, raid: str, drives: str, strip: str = '64', PDperArray: Optional[int] = None) -> Optional[virtualdrive.VirtualDrive]:
         """Create virtual drive (raid) managed by current controller
 
         Args:
@@ -290,11 +290,18 @@ class Controller(object):
         args = [
             'add',
             'vd',
-            'type={0}'.format(raid),
+            'r{0}'.format(raid),
             'name={0}'.format(name),
             'drives={0}'.format(drives),
             'strip={0}'.format(strip)
         ]
+
+        if raid == '1' or raid == '10':
+            if PDperArray is None:
+                PDperArray = 2
+
+        if PDperArray is not None:
+            args.append('PDperArray={0}'.format(PDperArray))
 
         self._run(args)
         for vd in self.vds:
@@ -327,7 +334,7 @@ class Controllers(object):
         self._binary = binary
         self._storcli = StorCLI(binary)
 
-    @property
+    @ property
     def _ctl_ids(self) -> List[str]:
         out = self._storcli.run(['show'])
         response = common.response_data(out)
@@ -337,7 +344,7 @@ class Controllers(object):
         else:
             return [ctl['Ctl'] for ctl in common.response_data(out)['System Overview']]
 
-    @property
+    @ property
     def _ctls(self):
         for ctl_id in self._ctl_ids:
             yield Controller(ctl_id=ctl_id, binary=self._binary)
@@ -345,13 +352,13 @@ class Controllers(object):
     def __iter__(self):
         return self._ctls
 
-    @property
+    @ property
     def ids(self):
         """(list of str): controllers id
         """
         return self._ctl_ids
 
-    def get_ctl(self, ctl_id):
+    def get_ctl(self, ctl_id: int) -> Optional[Controller]:
         """Get controller object by id
 
         Args:
