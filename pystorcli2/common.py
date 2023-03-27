@@ -7,6 +7,8 @@
 '''Common
 '''
 
+from typing import List
+
 
 def response_data(data):
     """StorCLI json output parser for respone data.
@@ -18,6 +20,29 @@ def response_data(data):
         dict: response data
     """
     return data['Controllers'][0]['Response Data']
+
+
+def response_data_subkey(data, subset: List[str]):
+    """StorCLI json output parser for respone data.
+       Also, it returs the data filtered by the first key found from the subset list.
+
+    Args:
+        data (dict): formatted output data from command line
+        subset (List[str]): list of keys to filter the data
+
+    Returns:
+        dict: response data
+    """
+    response = response_data(data)
+
+    ret = {}
+
+    for key in subset:
+        if key in response:
+            ret = response[key]
+            break
+
+    return ret
 
 
 def response_property(data):
