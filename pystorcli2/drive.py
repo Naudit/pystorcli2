@@ -646,7 +646,7 @@ class Drive(object):
         args = [
             '{0}'.format(spin)
         ]
-        return common.response_cmd(self._run(args))
+        return common.response_setter(self._run(args))
 
     def hotparedrive_create(self, dgs=None, enclaffinity=False, nonrevertible=False):
         """Creates a hotspare drive

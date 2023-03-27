@@ -11,7 +11,7 @@ import os
 import pytest
 from typing import List
 
-from pystorcli2 import StorCLI, Controllers, Controller, VirtualDrives, VirtualDrive
+from pystorcli2 import StorCLI, Controllers, Controller, VirtualDrives, VirtualDrive, Enclosures, Enclosure
 from .baseTest import TestStorcliMainClass
 
 
@@ -71,3 +71,22 @@ class TestStorcliOperations(TestStorcliMainClass):
         # create a new VD
         vd = c.create_vd('create_vd_raid1', '1', '35:12-13', '512')
         assert vd is not None
+
+    @pytest.mark.parametrize("folder", getTests('set_state_offline'))
+    def test_set_state_offline(self, folder):
+        # get storcli
+        s: StorCLI = self.get_storcli(folder)
+        # get controller 0
+        cs: Controllers = s.controllers
+        c = cs.get_ctl(0)
+        assert c is not None
+        # get the enclosure
+        es: Enclosures = c.encls
+        e = es.get_encl(35)
+        assert e is not None
+        # get the disk
+        ds = e.drives
+        d = ds[0]
+        assert d is not None
+        d.state = 'offline'
+        assert d.state == 'offline'

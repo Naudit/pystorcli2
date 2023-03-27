@@ -13,6 +13,8 @@ from . import controller
 from . import drive
 from . import exc
 
+from typing import List
+
 
 class Enclosure(object):
     """StorCLI enclosure
@@ -124,7 +126,7 @@ class Enclosure(object):
         return [drive['EID:Slt'].split(':')[1] for drive in drives]
 
     @property
-    def drives(self):
+    def drives(self) -> List[drive.Drive]:
         """(list of :obj:drive.Drive): enclosure drives
         """
         drives = []
