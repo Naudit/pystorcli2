@@ -1,0 +1,13 @@
+{
+    "Controllers": [
+        {
+            "Command Status": {
+                "CLI Version": "007.1704.0000.0000 Jan 16, 2021",
+                "Operating system": "Linux 5.15.0-58-generic",
+                "Controller": 0,
+                "Status": "Success",
+                "Description": "Spin Down Drive Succeeded."
+            }
+        }
+    ]
+}

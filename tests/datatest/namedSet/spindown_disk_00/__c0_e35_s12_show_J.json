@@ -1,0 +1,32 @@
+{
+    "Controllers": [
+        {
+            "Command Status": {
+                "CLI Version": "007.1704.0000.0000 Jan 16, 2021",
+                "Operating system": "Linux 5.15.0-58-generic",
+                "Controller": 0,
+                "Status": "Success",
+                "Description": "Show Drive Information Succeeded."
+            },
+            "Response Data": {
+                "Drive Information": [
+                    {
+                        "EID:Slt": "35:12",
+                        "DID": 21,
+                        "State": "UGood",
+                        "DG": "-",
+                        "Size": "3.637 TB",
+                        "Intf": "SAS",
+                        "Med": "HDD",
+                        "SED": "N",
+                        "PI": "N",
+                        "SeSz": "512B",
+                        "Model": "HUS726040AL5210 ",
+                        "Sp": "D",
+                        "Type": "-"
+                    }
+                ]
+            }
+        }
+    ]
+}
