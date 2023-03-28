@@ -126,20 +126,10 @@ class Enclosure(object):
         return [int(drive['EID:Slt'].split(':')[1]) for drive in drives]
 
     @property
-    def drives(self) -> List[drive.Drive]:
+    def drives(self) -> drive.Drives:
         """(list of :obj:drive.Drive): enclosure drives
         """
-        drives = []
-        for slot_id in self._slot_ids:
-            drives.append(
-                drive.Drive(
-                    ctl_id=self._ctl_id,
-                    encl_id=self._encl_id,
-                    slot_id=slot_id,
-                    binary=self._binary
-                )
-            )
-        return drives
+        return drive.Drives(ctl_id=self._ctl_id, encl_id=self._encl_id, binary=self._binary)
 
 
 class Enclosures(object):

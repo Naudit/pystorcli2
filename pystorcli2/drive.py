@@ -14,7 +14,7 @@ from . import enclosure
 from . import virtualdrive
 from . import exc
 
-from typing import Union
+from typing import Union, List, Optional
 
 
 class DriveMetrics(object):
@@ -686,3 +686,155 @@ class Drive(object):
             'hotsparedrive'
         ]
         return common.response_cmd(self._run(args))
+
+
+class Drives(object):
+    """StorCLI drives
+
+    Instance of this class is iterable with :obj:Drive as item
+
+    Args:
+        ctl_id (str): controller id
+        encl_id (str): enclosure id
+        binary (str): storcli binary or full path to the binary
+
+    Properties:
+        ids (list of str): list of drives id
+        ctl_id (str): controller id where drives are located
+        encl_id (str): enclosure id where drives are located
+        ctl (:obj:controller.Controller): controller
+        encl (:obj:Enclosure): enclosure
+
+
+    Methods:
+        get_drive (:obj:Enclosure): return drive object by id
+        get_drive_range_ids (list of int): return list of drive ids in range
+        get_drive_range (:obj:Drives): return drives object in range
+    """
+
+    def __init__(self, ctl_id: int, encl_id: int, binary: str = 'storcli64'):
+        """Constructor - create StorCLI Enclosures object
+
+        Args:
+            ctl_id (str): controller id
+            binary (str): storcli binary or full path to the binary
+        """
+        self._ctl_id: int = ctl_id
+        self._encl_id: int = encl_id
+        self._binary: str = binary
+        self._storcli: StorCLI = StorCLI(binary)
+
+    @property
+    def _drive_ids(self) -> List[int]:
+        args = [
+            '/c{0}/e{1}/sall'.format(self._ctl_id, self._encl_id),
+            'show'
+        ]
+
+        if not self.encl.has_drives:
+            return []
+
+        drives = common.response_data(self._storcli.run(args))[
+            'Drive Information']
+        return [int(drive['EID:Slt'].split(':')[1]) for drive in drives]
+
+    @property
+    def _drives(self):
+        for drive_id in self._drive_ids:
+            yield Drive(ctl_id=self._ctl_id, encl_id=self._encl_id, slot_id=drive_id, binary=self._binary)
+
+    def __iter__(self):
+        return self._drives
+
+    @property
+    def ids(self) -> List[int]:
+        """(list of str): list of enclosures id
+        """
+        return self._drive_ids
+
+    @property
+    def ctl_id(self) -> int:
+        """(str): enclosures controller id
+        """
+        return self._ctl_id
+
+    @property
+    def ctl(self):
+        """(:obj:controller.Controller): enclosures controller
+        """
+        return controller.Controller(ctl_id=self._ctl_id, binary=self._binary)
+
+    @property
+    def encl_id(self) -> int:
+        """(str): enclosure id
+        """
+        return self._encl_id
+
+    @property
+    def encl(self):
+        """(:obj:Enclosure): enclosure
+        """
+        return enclosure.Enclosure(ctl_id=self._ctl_id, encl_id=self._encl_id, binary=self._binary)
+
+    def get_drive(self, drive_id: int) -> Optional[Drive]:
+        """Get drive object by id
+
+        Args:
+            drive_id (str): drive id
+
+        Returns:
+            (None): no drive with id
+            (:obj:Drive): drive object
+        """
+        if drive_id in self._drive_ids:
+            return Drive(ctl_id=self._ctl_id, encl_id=self._encl_id, slot_id=drive_id, binary=self._binary)
+        else:
+            return None
+
+    def __getitem__(self, drive_id: int) -> Optional[Drive]:
+        return self.get_drive(drive_id)
+
+    def get_drive_range_ids(self, drive_id_begin: Union[int, str], drive_id_end: Optional[int] = None) -> List[int]:
+        """Get drive range list in the current enclosure
+
+        Args:
+            drive_id_begin (Union[int,str]): A range in format '1-10' or '1-10,20-30' or just an integer
+            drive_id_end (Optional[int]): end of the range
+        """
+
+        if drive_id_end:
+            # check that drive_id_begin is integer, if not raise exception
+            if not isinstance(drive_id_begin, int):
+                raise ValueError('drive_id_begin must be an integer')
+
+            # otherwise convert to string
+            drive_id_begin = '{0}-{1}'.format(drive_id_begin, drive_id_end)
+
+        # if drive_id_begin is an integer, convert to string
+        if isinstance(drive_id_begin, int):
+            drive_id_begin = str(drive_id_begin)
+
+        # get the list of drives
+        drive_ids = []
+        for drive_id in drive_id_begin.split(','):
+            if '-' in drive_id:
+                range_begin = drive_id.split('-')[0]
+                range_end = drive_id.split('-')[1]
+                drive_ids.extend(
+                    range(int(range_begin), int(range_end) + 1))
+            else:
+                drive_ids.append(int(drive_id))
+
+        return drive_ids
+
+    def get_drive_range(self, drive_id_begin: Union[int, str], drive_id_end: Optional[int] = None):
+        """Get drive range in the current enclosure
+
+        Args:
+            drive_id_begin (Union[int,str]): A range in format '1-10' or '1-10,20-30' or just an integer
+            drive_id_end (Optional[int]): end of the range
+        """
+        drive_ids = self.get_drive_range_ids(drive_id_begin, drive_id_end)
+
+        for drive_id in drive_ids:
+            yield Drive(ctl_id=self._ctl_id, encl_id=self._encl_id, slot_id=drive_id, binary=self._binary)

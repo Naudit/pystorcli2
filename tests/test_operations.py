@@ -11,7 +11,7 @@ import os
 import pytest
 from typing import List
 
-from pystorcli2 import StorCLI, Controllers, Controller, VirtualDrives, VirtualDrive, Enclosures, Enclosure
+from pystorcli2 import StorCLI, Controllers, Controller, VirtualDrives, VirtualDrive, Enclosures, Enclosure, Drives, Drive
 from .baseTest import TestStorcliMainClass
 
 
@@ -85,8 +85,8 @@ class TestStorcliOperations(TestStorcliMainClass):
         e = es.get_encl(35)
         assert e is not None
         # get the disk
-        ds = e.drives
-        d = ds[0]
+        ds: Drives = e.drives
+        d = next(iter(ds))
         assert d is not None
         d.spin = 'down'
         assert d.spin == 'down'
@@ -104,8 +104,8 @@ class TestStorcliOperations(TestStorcliMainClass):
         e = es.get_encl(35)
         assert e is not None
         # get the disk
-        ds = e.drives
-        d = ds[0]
+        ds: Drives = e.drives
+        d = next(iter(ds))
         assert d is not None
         d.state = 'offline'
         assert d.state == 'offline'
