@@ -13,7 +13,7 @@ from . import controller
 from . import drive
 from . import exc
 
-from typing import List
+from typing import List, Optional
 
 
 class Enclosure(object):
@@ -36,7 +36,7 @@ class Enclosure(object):
         drives (list of :obj:drive.Drive): enclosure drives
     """
 
-    def __init__(self, ctl_id, encl_id, binary='storcli64'):
+    def __init__(self, ctl_id: int, encl_id: int, binary: str = 'storcli64'):
         """Constructor - create StorCLI Enclosure object
 
         Args:
@@ -44,11 +44,11 @@ class Enclosure(object):
             encl_id (str): enclosure id
             binary (str): storcli binary or full path to the binary
         """
-        self._ctl_id = ctl_id
-        self._encl_id = encl_id
-        self._binary = binary
-        self._storcli = StorCLI(binary)
-        self._name = '/c{0}/e{1}'.format(self._ctl_id, self._encl_id)
+        self._ctl_id: int = ctl_id
+        self._encl_id: int = encl_id
+        self._binary: str = binary
+        self._storcli: StorCLI = StorCLI(binary)
+        self._name: str = '/c{0}/e{1}'.format(self._ctl_id, self._encl_id)
 
         self._exist()
 
@@ -65,13 +65,13 @@ class Enclosure(object):
                 self.__class__.__name__, self._name) from None
 
     @property
-    def id(self):
+    def id(self) -> int:
         """(str): enclosure id
         """
         return self._encl_id
 
     @property
-    def name(self):
+    def name(self) -> str:
         """(str): enclosure cmd name
         """
         return self._name
@@ -87,7 +87,7 @@ class Enclosure(object):
         return common.response_data(self._run(args))
 
     @property
-    def ctl_id(self):
+    def ctl_id(self) -> int:
         """(str): enclosure controller id
         """
         return self._ctl_id
@@ -99,7 +99,7 @@ class Enclosure(object):
         return controller.Controller(ctl_id=self._ctl_id, binary=self._binary)
 
     @property
-    def has_drives(self):
+    def has_drives(self) -> bool:
         """(bool): true if enclosure has drives
         """
         args = [
@@ -112,7 +112,7 @@ class Enclosure(object):
         return True
 
     @property
-    def _slot_ids(self):
+    def _slot_ids(self) -> List[int]:
         args = [
             '/c{0}/e{1}/sall'.format(self._ctl_id, self._encl_id),
             'show'
@@ -123,7 +123,7 @@ class Enclosure(object):
 
         drives = common.response_data(self._storcli.run(args))[
             'Drive Information']
-        return [drive['EID:Slt'].split(':')[1] for drive in drives]
+        return [int(drive['EID:Slt'].split(':')[1]) for drive in drives]
 
     @property
     def drives(self) -> List[drive.Drive]:
@@ -161,26 +161,26 @@ class Enclosures(object):
         get_encl (:obj:Enclosure): return enclosure object by id
     """
 
-    def __init__(self, ctl_id, binary='storcli64'):
+    def __init__(self, ctl_id: int, binary: str = 'storcli64'):
         """Constructor - create StorCLI Enclosures object
 
         Args:
             ctl_id (str): controller id
             binary (str): storcli binary or full path to the binary
         """
-        self._ctl_id = ctl_id
-        self._binary = binary
-        self._storecli = StorCLI(binary)
+        self._ctl_id: int = ctl_id
+        self._binary: str = binary
+        self._storecli: StorCLI = StorCLI(binary)
 
     @property
-    def _encl_ids(self):
+    def _encl_ids(self) -> List[int]:
         args = [
             '/c{0}/eall'.format(self._ctl_id),
             'show'
         ]
 
         out = self._storecli.run(args)
-        return [encl['EID'] for encl in common.response_data(out)['Properties']]
+        return [int(encl['EID']) for encl in common.response_data(out)['Properties']]
 
     @property
     def _encls(self):
@@ -191,13 +191,13 @@ class Enclosures(object):
         return self._encls
 
     @property
-    def ids(self):
+    def ids(self) -> List[int]:
         """(list of str): list of enclosures id
         """
         return self._encl_ids
 
     @property
-    def ctl_id(self):
+    def ctl_id(self) -> int:
         """(str): enclosures controller id
         """
         return self._ctl_id
@@ -208,7 +208,7 @@ class Enclosures(object):
         """
         return controller.Controller(ctl_id=self._ctl_id, binary=self._binary)
 
-    def get_encl(self, encl_id):
+    def get_encl(self, encl_id: int) -> Optional[Enclosure]:
         """Get enclosure object by id
 
         Args:
