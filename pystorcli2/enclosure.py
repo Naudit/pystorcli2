@@ -170,7 +170,7 @@ class Enclosures(object):
         """
         self._ctl_id: int = ctl_id
         self._binary: str = binary
-        self._storecli: StorCLI = StorCLI(binary)
+        self._storcli: StorCLI = StorCLI(binary)
 
     @property
     def _encl_ids(self) -> List[int]:
@@ -179,7 +179,7 @@ class Enclosures(object):
             'show'
         ]
 
-        out = self._storecli.run(args)
+        out = self._storcli.run(args)
         return [int(encl['EID']) for encl in common.response_data(out)['Properties']]
 
     @property
