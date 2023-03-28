@@ -297,7 +297,7 @@ class Controller(object):
             'strip={0}'.format(strip)
         ]
 
-        if int(raid) >= 10:
+        if int(raid) >= 10 and PDperArray is None:
             # Try to count the number of drives in the array
             # The format of the drives argument is e:s|e:s-x|e:s-x,y;e:s-x,y,z
             # The number of drives is the number of commas plus the dashes intervals
@@ -312,8 +312,7 @@ class Controller(object):
                     right = int(interval.split('-')[1])
                     numDrives += right - left
 
-            if PDperArray is None:
-                PDperArray = numDrives//2
+            PDperArray = numDrives//2
 
         if PDperArray is not None:
             args.append('PDperArray={0}'.format(PDperArray))
