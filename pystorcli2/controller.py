@@ -314,6 +314,9 @@ class Controller(object):
 
             PDperArray = numDrives//2
 
+        if raid == '00' and PDperArray is None:
+            PDperArray = 1
+
         if PDperArray is not None:
             args.append('PDperArray={0}'.format(PDperArray))
 
