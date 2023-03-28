@@ -10,10 +10,11 @@
 from . import StorCLI
 from . import common
 from . import enclosure
+from . import drive
 from . import virtualdrive
 from . import exc
 
-from typing import List, Optional
+from typing import List, Optional, Union
 
 
 class ControllerMetrics(object):
@@ -296,9 +297,23 @@ class Controller(object):
             'strip={0}'.format(strip)
         ]
 
-        if raid == '1' or raid == '10':
+        if int(raid) >= 10:
+            # Try to count the number of drives in the array
+            # The format of the drives argument is e:s|e:s-x|e:s-x,y;e:s-x,y,z
+            # The number of drives is the number of commas plus the dashes intervals
+
+            numDrives = 0
+            drives2 = drives.split(':')
+            drives2 = drives2[1]
+            numDrives += drives2.count(',')+1
+            for interval in drives2.split(','):
+                if '-' in interval:
+                    left = int(interval.split('-')[0])
+                    right = int(interval.split('-')[1])
+                    numDrives += right - left
+
             if PDperArray is None:
-                PDperArray = 2
+                PDperArray = numDrives//2
 
         if PDperArray is not None:
             args.append('PDperArray={0}'.format(PDperArray))
