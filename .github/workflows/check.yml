@@ -13,7 +13,7 @@ jobs:
         os: [ubuntu-latest, windows-latest]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@master
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
@@ -25,15 +25,15 @@ jobs:
           pip install .[dev]
 
       - name: Test with pytest
-        run: pytest --cov-report term --cov=pystorcli
+        run: pytest --cov-report term --cov=pystorcli2
 
       - name: Generate LCOV
-        if: ${{ matrix.python-version != '3.6'}}
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         run: coverage lcov
 
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@master
-        if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version != '3.6' }}
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         with:
           github-token: ${{ secrets.github_token }}
           flag-name: python-${{ matrix.python-version }}
