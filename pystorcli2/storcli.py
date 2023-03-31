@@ -257,7 +257,7 @@ class StorCLI(object):
         return second_clean
 
     @property
-    def controllers(self) -> 'pystorcli2.controllers.Controllers':
+    def controllers(self) -> 'pystorcli2.controller.Controllers':
         """Get list of controllers
         """
         from . import Controllers
