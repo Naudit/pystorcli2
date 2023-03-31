@@ -26,12 +26,6 @@ var/
 .installed.cfg
 *.egg
 
-# virtualenv
-bin/
-lib64
-include/
-lib/python*
-
 # editor
 *.swp
 

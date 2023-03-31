@@ -14,5 +14,5 @@ from .enclosure import Enclosure, Enclosures
 from .drive import Drive, Drives
 from .virtualdrive import VirtualDrive, VirtualDrives
 
-__ALL__ = ['__version__', 'StorCLI', 'Controller', 'Controllers',
+__all__ = ['__version__', 'StorCLI', 'Controller', 'Controllers',
            'Enclosure', 'Enclosures', 'Drive', 'Drives', 'VirtualDrive', 'VirtualDrives']

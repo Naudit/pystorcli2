@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ['pystorcli2', 'pystorcli2.bin', 'pystorcli']
+
+[tool.setuptools_scm]
+write_to = "pystorcli2/version.py"
+
+[project]
+name = "PyStorCLI2"
+authors = [
+    # Version 2 current maintainer & author
+    { name = "Rafael Leira", email = "rafael.leira@naudit.es" },
+    # Original author
+    { name = "Martin Dojcak", email = "martin.dojcak@lablabs.io" },
+]
+description = "StorCLI module wrapper 2"
+readme = "README.md"
+requires-python = ">=3.8"
+keywords = ["storcli", "wrapper"]
+license = { text = "BSD-3-Clause" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    'Intended Audience :: Developers',
+    'Intended Audience :: Information Technology',
+    'Intended Audience :: System Administrators',
+    'License :: OSI Approved :: BSD License',
+    'Natural Language :: English',
+    'Operating System :: POSIX',
+    'Topic :: System :: Hardware :: Hardware Drivers',
+    'Topic :: System :: Installation/Setup',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+    'Programming Language :: Python',
+    'Development Status :: 3 - Alpha',
+]
+dependencies = []
+dynamic = ["version"]
+
+[project.urls]
+"Homepage" = "https://github.com/Naudit/pystorcli2"
+
+[project.scripts]
+pystorcli-metrics = "pystorcli2.bin.metrics:main"
+
+[project.optional-dependencies]
+# Requirements only needed for development
+dev = ['pytest', 'pytest-cov', 'coveralls']
