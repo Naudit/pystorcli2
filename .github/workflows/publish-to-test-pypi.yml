@@ -27,7 +27,7 @@ jobs:
       - name: Generate doc
         run: >-
           python -m
-          pdoc -o docs -n pystorcli
+          pdoc -o docs -n pystorcli2
       - name: Build the test wheel and a source tarball
         run: >-
           PACKAGE_NAME=pystorcli2 python -m

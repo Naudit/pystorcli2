@@ -46,4 +46,4 @@ pystorcli-metrics = "pystorcli2.bin.metrics:main"
 
 [project.optional-dependencies]
 # Requirements only needed for development
-dev = ['pytest', 'pytest-cov', 'coveralls']
+dev = ['pytest', 'pytest-cov', 'coveralls', 'pdoc']
