@@ -93,6 +93,7 @@ def drives_metrics(drives):
         output[drive.id] = drive_metrics(drive)
     return output
 
+
 def enclosure_metrics(encl):
     """Return enclosure metrics with drives metrics
 
@@ -174,7 +175,8 @@ def virtual_drives_metrics(vds):
         enclosures = {}
         for drive in vd.drives:
             if drive.encl_id in enclosures:
-                enclosures[drive.encl_id]['drive'].update({drive.id: drive_metrics(drive)})
+                enclosures[drive.encl_id]['drive'].update(
+                    {drive.id: drive_metrics(drive)})
             else:
                 enclosures[drive.encl_id] = {
                     'drive': {
@@ -231,7 +233,7 @@ def main():
     """Return json metrics
     """
     # enable StoreCLI singleton object with resposne cache
-    pystorcli.enable_singleton()
+    pystorcli.StorCLI.enable_singleton()
     storcli = pystorcli.StorCLI()
     storcli.cache_enable = True
 
