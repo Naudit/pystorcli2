@@ -1,0 +1,17 @@
+CLI Version = 007.2309.0000.0000 Sep 16,
+2022
+Operating system = Linux 5.4.0-99-generic
+Controller = 0
+Status = Success
+Description = None
+
+Events = GETEVENTS
+
+Controller Properties :
+=====================
+
+------------------------------------
+Ctrl Status  Method          Value  
+------------------------------------
+   0 Success handleSuboption Events 
+------------------------------------

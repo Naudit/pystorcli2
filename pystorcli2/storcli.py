@@ -192,11 +192,25 @@ class StorCLI(object):
                     if self.cache_enable:
                         self.__response_cache[cmd_cache_key] = ret_json
                     return ret_json
-                except json.JSONDecodeError:
-                    # :/
-                    err = re.search('(^.*)Storage.*Command.*$',
-                                    ret.stdout, re.MULTILINE | re.DOTALL).group(1)
-                    raise exc.StorCliCmdError(cmd, err)
+                except json.JSONDecodeError as err:
+                    # legacy handler (Ralequi: I don't know if this is still needed or what exactly it does)
+                    output = re.search('(^.*)Storage.*Command.*$',
+                                       ret.stdout, re.MULTILINE | re.DOTALL)
+                    if output:
+                        raise exc.StorCliCmdError(cmd, output.group(1))
+
+                    # Check if we can still parse the output
+                    parsed = {}
+                    for line in ret.stdout.splitlines():
+                        if '=' in line:
+                            key, value = line.split('=', 1)
+                            parsed[key.strip()] = value.strip()
+
+                    if 'Status' in parsed:
+                        return parsed
+                    else:
+                        raise exc.StorCliCmdError(cmd, str(err))
+
             except subprocess.TimeoutExpired as err:
                 raise exc.StorCliRunTimeout(err)
             except subprocess.SubprocessError as err:
