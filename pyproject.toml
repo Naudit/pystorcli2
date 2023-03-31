@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "setuptools-scm"]
+requires = ["setuptools", "setuptools-scm[toml]"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
@@ -7,6 +7,7 @@ packages = ['pystorcli2', 'pystorcli2.bin', 'pystorcli']
 
 [tool.setuptools_scm]
 write_to = "pystorcli2/version.py"
+local_scheme = "no-local-version"
 
 [project]
 name = "PyStorCLI2"
