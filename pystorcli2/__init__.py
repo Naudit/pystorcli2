@@ -11,8 +11,8 @@ from .version import __version__
 from .storcli import StorCLI
 from .controller import Controller, Controllers
 from .enclosure import Enclosure, Enclosures
-from .drive import Drive, Drives
+from .drive import DriveState, Drive, Drives
 from .virtualdrive import VirtualDrive, VirtualDrives
 
 __all__ = ['__version__', 'StorCLI', 'Controller', 'Controllers',
-           'Enclosure', 'Enclosures', 'Drive', 'Drives', 'VirtualDrive', 'VirtualDrives']
+           'Enclosure', 'Enclosures', 'DriveState', 'Drive', 'Drives', 'VirtualDrive', 'VirtualDrives']

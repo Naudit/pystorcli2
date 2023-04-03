@@ -11,7 +11,7 @@ import os
 import pytest
 from typing import List
 
-from pystorcli2 import StorCLI, Controllers, Controller, VirtualDrives, VirtualDrive, Enclosures, Enclosure, Drives, Drive
+from pystorcli2 import StorCLI, Controllers, Controller, VirtualDrives, VirtualDrive, Enclosures, Enclosure, Drives, Drive, DriveState
 from .baseTest import TestStorcliMainClass
 
 
@@ -107,8 +107,11 @@ class TestStorcliOperations(TestStorcliMainClass):
         ds: Drives = e.drives
         d = next(iter(ds))
         assert d is not None
+
         d.state = 'offline'
-        assert d.state == 'offline'
+        assert d.state.value.lower() == 'offline'
+        d.state = DriveState.Offln
+        assert d.state == DriveState.Offln
 
     @pytest.mark.parametrize("folder", getTests('show_events'))
     def test_show_events(self, folder):
