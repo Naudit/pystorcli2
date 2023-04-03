@@ -297,22 +297,25 @@ class Controller(object):
             'strip={0}'.format(strip)
         ]
 
-        if int(raid) >= 10 and PDperArray is None:
-            # Try to count the number of drives in the array
-            # The format of the drives argument is e:s|e:s-x|e:s-x,y;e:s-x,y,z
-            # The number of drives is the number of commas plus the dashes intervals
+        try:
+            if int(raid) >= 10 and PDperArray is None:
+                # Try to count the number of drives in the array
+                # The format of the drives argument is e:s|e:s-x|e:s-x,y;e:s-x,y,z
+                # The number of drives is the number of commas plus the dashes intervals
 
-            numDrives = 0
-            drives2 = drives.split(':')
-            drives2 = drives2[1]
-            numDrives += drives2.count(',')+1
-            for interval in drives2.split(','):
-                if '-' in interval:
-                    left = int(interval.split('-')[0])
-                    right = int(interval.split('-')[1])
-                    numDrives += right - left
+                numDrives = 0
+                drives2 = drives.split(':')
+                drives2 = drives2[1]
+                numDrives += drives2.count(',')+1
+                for interval in drives2.split(','):
+                    if '-' in interval:
+                        left = int(interval.split('-')[0])
+                        right = int(interval.split('-')[1])
+                        numDrives += right - left
 
-            PDperArray = numDrives//2
+                PDperArray = numDrives//2
+        except ValueError:
+            pass
 
         if raid == '00' and PDperArray is None:
             PDperArray = 1
