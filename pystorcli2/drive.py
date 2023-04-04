@@ -690,18 +690,7 @@ class Drive(object):
         """ Set drive state
         """
 
-        # if value is a str convert to DriveState
-        if isinstance(value, str):
-            value = DriveState.from_string(value)
-
-        # check if we should try to force the state change
-        enforce_states = [
-            DriveState.JBOD
-        ]
-
-        force = (value in enforce_states) or (self.state in enforce_states)
-
-        return self.set_state(value, force=force)
+        return self.set_state(value, force=False)
 
     def set_state(self, value: Union[str, DriveState], force: bool = False):
         """ Set drive state
