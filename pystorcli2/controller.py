@@ -275,6 +275,17 @@ class Controller(object):
         """
         return enclosure.Enclosures(ctl_id=self._ctl_id, binary=self._binary)
 
+    @property
+    def drives_ids(self) -> List[str]:
+        """(list of str): list of drives ids in format (e:s)
+        """
+        drives = []
+        for encl in self.encls:
+            for id in encl.drives.ids:
+                drives.append("{enc}:{id}".format(enc=encl.id, id=id))
+
+        return drives
+
     def create_vd(self, name: str, raid: str, drives: str, strip: str = '64', PDperArray: Optional[int] = None) -> Optional[virtualdrive.VirtualDrive]:
         """Create virtual drive (raid) managed by current controller
 
