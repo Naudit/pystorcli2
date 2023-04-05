@@ -221,3 +221,54 @@ def drives_from_expression(expr):
             drives.extend(drives_from_expression(expr[pos:]))
             break
     return drives
+
+
+def expand_drive_ids(drives: str) -> str:
+    """Expand drive ids to range if needed
+
+    Args:
+        drives (str): storcli drives expression (e:s|e:s-x|e:s-x,y;e:s-x,y,z)
+
+    Returns:
+        (str): expanded drives expression (without dashes)
+    """
+    drive_list = drives.split(',')
+    output = ""
+
+    for i, drive in enumerate(drive_list):
+        drive = drive.strip()
+        encl, slot = drive.split(':')
+        new_output = drive
+
+        encl = encl.strip()
+        slot = slot.strip()
+
+        if '-' in slot:
+            begin, end = slot.split('-')
+
+            begin = begin.strip()
+            end = end.strip()
+
+            new_output = ','.join(['{0}:{1}'.format(encl, i)
+                                   for i in range(int(begin), int(end)+1)])
+
+        if i > 0:
+            output += ',' + new_output
+        else:
+            output += new_output
+
+    return output
+
+
+def count_drives(drives: str) -> int:
+    """Count number of drives in drives expression
+
+    Args:
+        drives (str): storcli drives expression (e:s|e:s-x|e:s-x,y;e:s-x,y,z)
+
+    Returns:
+        (int): number of drives
+    """
+
+    expanded_drives = expand_drive_ids(drives)
+    return len(expanded_drives.split(','))
