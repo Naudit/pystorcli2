@@ -314,13 +314,21 @@ class Controller(object):
                 # The format of the drives argument is e:s|e:s-x|e:s-x,y;e:s-x,y,z
 
                 numDrives = common.count_drives(drives)
-                PDperArray = numDrives//2
+
+                if numDrives % 2 != 0 and numDrives % 3 == 0:
+                    # In some scenarios, such as 9 drives with raid 60, 3 is a good pd number but 4 is not
+                    # Must check for similar scenarios
+                    # BTW we don't clearly understand what PDperArray is for and what exactly it does under the hood. More investigation is needed
+                    PDperArray = numDrives//3
+                else:
+                    PDperArray = numDrives//2
 
         except ValueError:
             pass
 
-        if raid == '00' and PDperArray is None:
-            PDperArray = 1
+        finally:
+            if raid == '00' and PDperArray is None:
+                PDperArray = 1
 
         if PDperArray is not None:
             args.append('PDperArray={0}'.format(PDperArray))
