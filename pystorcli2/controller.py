@@ -206,6 +206,7 @@ class Controller(object):
 
     Methods:
         create_vd (:obj:VirtualDrive): create virtual drive
+        set_patrolread (dict): configures patrol read state and schedule
         patrolread_start (dict): starts a patrol read on controller
         patrolread_pause (dict): pauses patrol read on controller
         patrolread_resume (dict): resumes patrol read on controller
