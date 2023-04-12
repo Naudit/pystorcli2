@@ -155,16 +155,13 @@ class VirtualDrive(object):
         erase_progress (str): % progress of erase on a virtual drive
         delete (dict): delete virtual drive
         migrate_start (dict): starts the migration process on a virtual drive
-        migrate_stop (dict): stops an migration process running on a virtual drive
         migrate_running (bool): check if migrate is running on a virtual drive
-
-    TODO:
-        Implement missing methods:
-            * start cc
-            * stop cc
-            * pause cc
-            * resume cc
-            * cc running
+        cc_start (dict): starts a consistency check a virtual drive
+        cc_pause (dict): pauses consistency check on a virtual drive
+        cc_resume (dict): resumes consistency check on a virtual drive
+        cc_stop (dict): stops consistency check if running on a virtual drive
+        cc_running (bool): check if consistency check is running on a virtual drive
+        cc_progress (str): % progress of the consistency check operation
     """
 
     def __init__(self, ctl_id, vd_id, binary='storcli64'):
@@ -695,7 +692,7 @@ class VirtualDrive(object):
         return common.response_cmd(self._run(args))
 
     def migrate_start(self, option, drives, raid=None, force=False):
-        """Starts migartion on the virtual drive
+        """Starts migration on the virtual drive
 
         Args:
             option (str):
@@ -736,6 +733,90 @@ class VirtualDrive(object):
 
         status = self._resposne_operation_status(self._run(args))['Status']
         return bool(status == 'In progress')
+
+    def cc_start(self, force=False):
+        """Starts a consistency check operation for a virtual drive
+
+        Args:
+            force - if specified, then consistency check will start even on an uninitialized drive
+
+        Returns:
+            (dict): resposne cmd data
+        """
+        args = [
+            'start',
+            'cc'
+        ]
+        if force:
+            args.append('force')
+        return common.response_cmd(self._run(args))
+
+    def cc_stop(self):
+        """Stops the consistency check operation of a virtual drive
+
+        Returns:
+            (dict): resposne cmd data
+        """
+        args = [
+            'stop',
+            'cc'
+        ]
+        return common.response_cmd(self._run(args))
+
+    def cc_pause(self):
+        """Pauses the consistency check operation of a virtual drive
+
+        Returns:
+            (dict): resposne cmd data
+        """
+        args = [
+            'pause',
+            'cc'
+        ]
+        return common.response_cmd(self._run(args))
+
+    def cc_resume(self):
+        """Resumes the consistency check operation of a virtual drive
+
+        Returns:
+            (dict): resposne cmd data
+        """
+        args = [
+            'resume',
+            'cc'
+        ]
+        return common.response_cmd(self._run(args))
+
+    @property
+    def cc_running(self):
+        """Check if consistency check is running on a virtual drive
+
+        Returns:
+            (bool): true / false
+        """
+        args = [
+            'show',
+            'cc'
+        ]
+
+        status = self._resposne_operation_status(self._run(args))['Status']
+        return bool(status == 'In progress')
+
+    @property
+    def cc_progress(self):
+        """Show virtual drive consistency check progress in percentage
+
+        Returns:
+            (str): progress in percentage
+        """
+
+        args = [
+            'show',
+            'cc'
+        ]
+
+        progress = self._resposne_operation_status(self._run(args))['Progress%']
+        return progress
 
 
 class VirtualDrives(object):

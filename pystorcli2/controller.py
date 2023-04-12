@@ -14,8 +14,8 @@ from . import drive
 from . import virtualdrive
 from . import exc
 
+from datetime import datetime
 from typing import List, Optional, Union
-
 
 class ControllerMetrics(object):
     """StorCLI Controller Metrics
@@ -203,6 +203,7 @@ class Controller(object):
         autorebuild (dict): current auto rebuild state (also setter)
         foreignautoimport (dict): imports foreign configuration automatically at boot (also setter)
         patrolread (dict): current patrol read settings (also setter)
+        cc (dict): current patrol read settings (also setter)
 
     Methods:
         create_vd (:obj:VirtualDrive): create virtual drive
@@ -212,6 +213,7 @@ class Controller(object):
         patrolread_resume (dict): resumes patrol read on controller
         patrolread_stop (dict): stops patrol read if running on controller
         patrolread_running (bool): check if patrol read is running on controller
+        set_cc (dict): configures consistency check mode and start time
 
     TODO:
         Implement missing methods:
@@ -526,6 +528,59 @@ class Controller(object):
                 status = pr['Value']
         return bool('Active' in status)
 
+    @property
+    @common.lower
+    def cc(self):
+        """Get/Set consistency chceck
+
+        One of the following options can be set (str):
+            seq  - sequential mode
+            conc - concurrent mode
+            off  - disables consistency check
+
+        Returns:
+            (str): on / off
+        """
+        args = [
+            'show',
+            'cc'
+        ]
+
+        for pr in common.response_property(self._run(args)):
+            if pr['Ctrl_Prop'] == "CC Operation Mode":
+                if pr['Value'] == 'Disabled':
+                    return 'off'
+                else:
+                    return 'on'
+        return 'off'
+
+    @cc.setter
+    def cc(self, value):
+        """
+        """
+        return self.set_cc(value)
+
+    def set_cc(self, value, starttime=None):
+        """Set consistency check
+
+        Args:
+            value (str):
+                seq  - sequential mode
+                conc - concurrent mode
+                off  - disables consistency check
+            starttime (str): Start time of a consistency check is yyyy/mm/dd hh format
+        """
+        args = [
+            'set',
+            'cc={0}'.format(value)
+        ]
+
+        if value in ('seq', 'conc'):
+            if starttime is None:
+                starttime = datetime.now().strftime('%Y/%m/%d %H')
+            args.append('starttime="{0}"'.format(starttime))
+
+        return common.response_setter(self._run(args))
 
 class Controllers(object):
     """StorCLI Controllers
