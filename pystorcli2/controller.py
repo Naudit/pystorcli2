@@ -200,10 +200,22 @@ class Controller(object):
         metrics (:obj:ControllerMetrics): controller metrics
         vds (list of :obj:virtualdrive.VirtualDrives): controller virtual drives
         encls (:obj:enclosure.Enclosures): controller enclosures
+        autorebuild (dict): current auto rebuild state (also setter)
+        foreignautoimport (dict): imports foreign configuration automatically at boot (also setter)
+        patrolread (dict): current patrol read settings (also setter)
 
     Methods:
         create_vd (:obj:VirtualDrive): create virtual drive
+        set_patrolread (dict): configures patrol read state and schedule
+        patrolread_start (dict): starts a patrol read on controller
+        patrolread_pause (dict): pauses patrol read on controller
+        patrolread_resume (dict): resumes patrol read on controller
+        patrolread_stop (dict): stops patrol read if running on controller
+        patrolread_running (bool): check if patrol read is running on controller
 
+    TODO:
+        Implement missing methods:
+            * patrol read progress
     """
 
     def __init__(self, ctl_id, binary='storcli64'):
@@ -338,6 +350,181 @@ class Controller(object):
             if name == vd.name:
                 return vd
         return None
+
+    @property
+    @common.lower
+    def autorebuild(self):
+        """Get/Set auto rebuild state
+
+        One of the following options can be set (str):
+            on - enables autorebuild
+            off - disables autorebuild
+
+        Returns:
+            (str): on / off
+        """
+        args = [
+            'show',
+            'autorebuild'
+        ]
+
+        prop = common.response_property(self._run(args))[0]
+        return prop['Value']
+
+    @autorebuild.setter
+    def autorebuild(self, value):
+        """
+        """
+        args = [
+            'set',
+            'autorebuild={0}'.format(value)
+        ]
+        return common.response_setter(self._run(args))
+
+    @property
+    @common.lower
+    def foreignautoimport(self):
+        """Get/Set auto foreign import configuration
+
+        One of the following options can be set (str):
+            on - enables foreignautoimport
+            off - disables foreignautoimport
+
+        Returns:
+            (str): on / off
+        """
+        args = [
+            'show',
+            'foreignautoimport'
+        ]
+        prop = common.response_property(self._run(args))[0]
+        return prop['Value']
+
+    @foreignautoimport.setter
+    def foreignautoimport(self, value):
+        """
+        """
+        args = [
+            'set',
+            'foreignautoimport={0}'.format(value)
+        ]
+        return common.response_setter(self._run(args))
+
+    @property
+    @common.lower
+    def patrolread(self):
+        """Get/Set patrol read
+
+        One of the following options can be set (str):
+            on - enables patrol read
+            off - disables patrol read
+
+        Returns:
+            (str): on / off
+        """
+        args = [
+            'show',
+            'patrolread'
+        ]
+
+        for pr in common.response_property(self._run(args)):
+            if pr['Ctrl_Prop'] == "PR Mode":
+                if pr['Value'] == 'Disable':
+                    return 'off'
+                else:
+                    return 'on'
+        return 'off'
+
+
+    @patrolread.setter
+    def patrolread(self, value):
+        """
+        """
+        return self.set_patrolread(value)
+
+
+    def set_patrolread(self, value, mode='manual'):
+        """Set patrol read
+
+        Args:
+            value (str): on / off to configure patrol read state
+            mode (str): auto | manual to configure patrol read schedule
+        """
+        args = [
+            'set',
+            'patrolread={0}'.format(value)
+        ]
+
+        if value == 'on':
+            args.append('mode={0}'.format(mode))
+
+        return common.response_setter(self._run(args))
+
+    def patrolread_start(self):
+        """Starts the patrol read operation of the controller
+
+        Returns:
+            (dict): response cmd data
+        """
+        args = [
+            'start',
+            'patrolread'
+        ]
+        return common.response_cmd(self._run(args))
+
+    def patrolread_stop(self):
+        """Stops the patrol read operation of the controller
+
+        Returns:
+            (dict): response cmd data
+        """
+        args = [
+            'stop',
+            'patrolread'
+        ]
+        return common.response_cmd(self._run(args))
+
+    def patrolread_pause(self):
+        """Pauses the patrol read operation of the controller
+
+        Returns:
+            (dict): response cmd data
+        """
+        args = [
+            'pause',
+            'patrolread'
+        ]
+        return common.response_cmd(self._run(args))
+
+    def patrolread_resume(self):
+        """Resumes the patrol read operation of the controller
+
+        Returns:
+            (dict): response cmd data
+        """
+        args = [
+            'resume',
+            'patrolread'
+        ]
+        return common.response_cmd(self._run(args))
+
+    @property
+    def patrolread_running(self):
+        """Check if patrol read is running on the controller
+
+        Returns:
+            (bool): true / false
+        """
+        args = [
+            'show',
+            'patrolread'
+        ]
+
+        status = ''
+        for pr in common.response_property(self._run(args)):
+            if pr['Ctrl_Prop'] == "PR Current State":
+                status = pr['Value']
+        return bool('Active' in status)
 
 
 class Controllers(object):
