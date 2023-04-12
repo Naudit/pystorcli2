@@ -4,6 +4,8 @@ Version 0.6.1
 - **New features**:
   -----------------
   - [**Controller**]        Added method drives_ids to get all pair of enclosure:drive_id
+  - [**Controller**]        Added methods to handle patrol read and background initialization (PR [#9](https://github.com/Naudit/pystorcli2/pull/9))
+  - [**Controller**]        Added properties to get/set `autorebuild`,  `foreignautoimport` and `patrolread`. (PR [#9](https://github.com/Naudit/pystorcli2/pull/9))
 
 - **Fixes**:
   ----------
