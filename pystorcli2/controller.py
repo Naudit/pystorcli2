@@ -286,6 +286,17 @@ class Controller(object):
         """
         return enclosure.Enclosures(ctl_id=self._ctl_id, binary=self._binary)
 
+    @property
+    def drives_ids(self) -> List[str]:
+        """(list of str): list of drives ids in format (e:s)
+        """
+        drives = []
+        for encl in self.encls:
+            for id in encl.drives.ids:
+                drives.append("{enc}:{id}".format(enc=encl.id, id=id))
+
+        return drives
+
     def create_vd(self, name: str, raid: str, drives: str, strip: str = '64', PDperArray: Optional[int] = None) -> Optional[virtualdrive.VirtualDrive]:
         """Create virtual drive (raid) managed by current controller
 
@@ -312,24 +323,23 @@ class Controller(object):
             if int(raid) >= 10 and PDperArray is None:
                 # Try to count the number of drives in the array
                 # The format of the drives argument is e:s|e:s-x|e:s-x,y;e:s-x,y,z
-                # The number of drives is the number of commas plus the dashes intervals
 
-                numDrives = 0
-                drives2 = drives.split(':')
-                drives2 = drives2[1]
-                numDrives += drives2.count(',')+1
-                for interval in drives2.split(','):
-                    if '-' in interval:
-                        left = int(interval.split('-')[0])
-                        right = int(interval.split('-')[1])
-                        numDrives += right - left
+                numDrives = common.count_drives(drives)
 
-                PDperArray = numDrives//2
+                if numDrives % 2 != 0 and numDrives % 3 == 0:
+                    # In some scenarios, such as 9 drives with raid 60, 3 is a good pd number but 4 is not
+                    # Must check for similar scenarios
+                    # BTW we don't clearly understand what PDperArray is for and what exactly it does under the hood. More investigation is needed
+                    PDperArray = numDrives//3
+                else:
+                    PDperArray = numDrives//2
+
         except ValueError:
             pass
 
-        if raid == '00' and PDperArray is None:
-            PDperArray = 1
+        finally:
+            if raid == '00' and PDperArray is None:
+                PDperArray = 1
 
         if PDperArray is not None:
             args.append('PDperArray={0}'.format(PDperArray))

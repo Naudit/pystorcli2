@@ -1,3 +1,15 @@
+Version 0.6.1
+=============
+
+- **New features**:
+  -----------------
+  - [**Controller**]        Added method drives_ids to get all pair of enclosure:drive_id
+
+- **Fixes**:
+  ----------
+  - [**Controller**]        Fixed device count on controller.create_vd. Requested in [#2](https://github.com/Naudit/pystorcli2/issues/2)
+  - [**Controller**]        Fixed default pd on controller.create_vd in some scenarios. Requested in [#2](https://github.com/Naudit/pystorcli2/issues/2)
+
 Version 0.6.0
 =============
 
