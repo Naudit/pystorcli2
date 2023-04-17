@@ -7,11 +7,11 @@
 '''StorCLI enclosure python module
 '''
 
-from . import StorCLI
-from . import common
-from . import controller
-from . import drive
-from . import exc
+from .. import StorCLI
+from .. import common
+from .. import controller
+from .. import drive
+from .. import exc
 
 from typing import List, Optional
 

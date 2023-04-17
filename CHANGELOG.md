@@ -1,7 +1,10 @@
 Version 0.6.2
 =============
   - [**Controller**]        Fixed minnor issue with controller.metrics typing. WARNING: those types will be changed in future versions.
+  - [**Controller**]        Refactor: Moved metrics into different subfolder.
+  - [**Enclosure**]         Refactor: Moved into subfolder.
   - [**Drive**]             Refactor: Moved state & metrics into different subfolder.
+  - [**Virtualdrive**]      Refactor: Moved metrics into different subfolder.
   - Many python typing fixes
 
 Version 0.6.1
