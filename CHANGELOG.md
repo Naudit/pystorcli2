@@ -1,3 +1,9 @@
+Version 0.6.2
+=============
+  - [**Controller**]        
+  - [**Drive**]             Moved state & metrics into different subfolder.
+  - Many python typing fixes
+
 Version 0.6.1
 =============
 

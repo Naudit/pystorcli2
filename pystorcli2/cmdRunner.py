@@ -21,7 +21,7 @@ class CMDRunner():
         """
         return subprocess.run(args, **kwargs)
 
-    def binaryCheck(self, binary):
+    def binaryCheck(self, binary) -> str:
         """Verify and return full binary path
         """
         _bin = shutil.which(binary)

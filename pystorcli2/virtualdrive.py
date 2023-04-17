@@ -815,7 +815,8 @@ class VirtualDrive(object):
             'cc'
         ]
 
-        progress = self._resposne_operation_status(self._run(args))['Progress%']
+        progress = self._resposne_operation_status(self._run(args))[
+            'Progress%']
         return progress
 
 

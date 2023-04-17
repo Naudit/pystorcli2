@@ -14,6 +14,7 @@ import shutil
 import threading
 import subprocess
 import pystorcli2
+from typing import Optional, Dict, Any
 
 from . import common
 from . import exc
@@ -47,8 +48,8 @@ class StorCLI(object):
     __singleton_instance = None
     __cache_lock = threading.Lock()
     __cache_enabled = False
-    __response_cache = {}
-    __cmdrunner = None
+    __response_cache: Dict[str, Any] = {}
+    __cmdrunner = cmdRunner.CMDRunner()
 
     def __new__(cls, *args, **kwargs):
         """Thread safe singleton
@@ -63,29 +64,22 @@ class StorCLI(object):
             else:
                 return super(StorCLI, cls).__new__(cls)
 
-    def __init__(self, binary='storcli64', cmdrunner: cmdRunner.CMDRunner = None):
+    def __init__(self, binary='storcli64', cmdrunner: Optional[cmdRunner.CMDRunner] = None):
         """Constructor - create StorCLI object wrapper
 
         Args:
             binary (str): storcli binary or full path to the binary
         """
 
-        if not _SINGLETON_STORCLI_MODULE_ENABLE or (_SINGLETON_STORCLI_MODULE_ENABLE and (not hasattr(self, '_StorCLI__cmdrunner') or self.__cmdrunner is None)):
-            # Do not override __cmdrunner if it is already set in singleton mode
-            if cmdrunner is None:
-                if self.__cmdrunner is None:
-                    self.__cmdrunner = cmdRunner.CMDRunner()
-            else:
-                self.__cmdrunner = cmdrunner
+        if cmdrunner is not None:
+            self._storcli = cmdrunner.binaryCheck(binary)
+        else:
+            self._storcli = self.__cmdrunner.binaryCheck(binary)
 
-        if _SINGLETON_STORCLI_MODULE_ENABLE:
-            if not hasattr(self, '_storcli'):
-                # do not override _storcli in singleton if already exist
-                self._storcli = self.__cmdrunner.binaryCheck(binary)
+        if cmdrunner is not None:
+            self.__cmdrunner = cmdrunner
 
         if not _SINGLETON_STORCLI_MODULE_ENABLE:
-            # dont share singleton lock and binary
-            self._storcli = self.__cmdrunner.binaryCheck(binary)
             self.__cache_lock = threading.Lock()
 
     def set_cmdrunner(self, cmdrunner: cmdRunner.CMDRunner):
@@ -228,7 +222,7 @@ class StorCLI(object):
     def enable_singleton():
         """Enable StorCLI to be singleton on module level
 
-        Use StorCLI singleton across all objects. All pystorcli 
+        Use StorCLI singleton across all objects. All pystorcli
         class instances use their own StorCLI object. With enabled cache
         we can speedup for example metric lookups.
 

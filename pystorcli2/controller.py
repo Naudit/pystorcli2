@@ -10,12 +10,13 @@
 from . import StorCLI
 from . import common
 from . import enclosure
-from . import drive
 from . import virtualdrive
 from . import exc
+from .drive.state import DriveState
 
 from datetime import datetime
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict
+
 
 class ControllerMetrics(object):
     """StorCLI Controller Metrics
@@ -23,7 +24,7 @@ class ControllerMetrics(object):
     Instance of this class represents controller metrics
     """
 
-    def __init__(self, ctl):
+    def __init__(self, ctl: 'Controller'):
         """Constructor - create StorCLI ControllerMetrics object
 
         Args:
@@ -42,7 +43,7 @@ class ControllerMetrics(object):
             ctl_temperature (str): controller temperature
             all (dict): all metrics
         """
-        self._ctl = ctl
+        self._ctl: Controller = ctl
 
     @property
     def _show_all(self):
@@ -106,7 +107,7 @@ class ControllerMetrics(object):
     def virtual_drives_non_optimal(self):
         """(dict): number of virtual drives with in non optimal state
         """
-        vds = {}
+        vds: Dict[str, int] = {}
 
         if not self._ctl.vds.has_vds:
             return vds
@@ -119,7 +120,7 @@ class ControllerMetrics(object):
                     vds[vd.state] = 1
 
         # convert counter to string
-        return {k: str(v) for k, v in vds.items()}
+        return {str(k): str(v) for k, v in vds.items()}
 
     @property
     @common.stringify
@@ -136,7 +137,7 @@ class ControllerMetrics(object):
     def physical_drives_non_optimal(self):
         """(dict): number of physical drives in non optimal state (UBad | Offln)
         """
-        drives = {}
+        drives: Dict[DriveState, int] = {}
 
         for encl in self._ctl.encls:
             if not encl.has_drives:
@@ -437,13 +438,11 @@ class Controller(object):
                     return 'on'
         return 'off'
 
-
     @patrolread.setter
     def patrolread(self, value):
         """
         """
         return self.set_patrolread(value)
-
 
     def set_patrolread(self, value, mode='manual'):
         """Set patrol read
@@ -581,6 +580,7 @@ class Controller(object):
             args.append('starttime="{0}"'.format(starttime))
 
         return common.response_setter(self._run(args))
+
 
 class Controllers(object):
     """StorCLI Controllers
