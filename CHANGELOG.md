@@ -1,5 +1,12 @@
 Version 0.6.2
 =============
+
+- **New features**:
+  -----------------
+  - [**Virtualdrive**]      New property (get & set) `access` in order to get or set the access policy of a virtual drive.
+
+- **Fixes**:
+  ----------
   - [**Controller**]        Fixed minnor issue with controller.metrics typing. WARNING: those types will be changed in future versions.
   - [**Controller**]        Refactor: Moved metrics into different subfolder.
   - [**Enclosure**]         Refactor: Moved into subfolder.
@@ -7,6 +14,10 @@ Version 0.6.2
   - [**Virtualdrive**]      Refactor: Moved metrics into different subfolder.
   - Many python typing fixes
 
+- **Breaking changes**
+  --------------------
+  - [**Virtualdrive**]      State is now of type `VDState`
+    
 Version 0.6.1
 =============
 

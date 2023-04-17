@@ -15,6 +15,8 @@ from .. import exc
 
 # import submodules
 from .metrics import VirtualDriveMetrics
+from .access import VDAccess
+from .state import VDState
 
 
 class VirtualDrive(object):
@@ -33,7 +35,8 @@ class VirtualDrive(object):
         metrics (dict): virtual drive metrics
         raid (str): vitual drive raid level
         size (str): virtual drive size
-        state (str): virtual drive state
+        state (VDState): virtual drive state
+        access (VDAccess): virtual drive acess (RO,RW,...) (also setter)
         strip (str): virtual drive strip size
         os_exposed (bool): virtual drive exposed to the OS
         os_name (str): virtual drive device path (/dev/...)
@@ -149,23 +152,34 @@ class VirtualDrive(object):
         return self._response_properties(self._run(args))['Size']
 
     @property
-    @common.lower
-    def state(self):
-        """(str): virtual drive state (optimal | recovery | offline | degraded | degraded_partially)
+    def state(self) -> VDState:
+        """(VDState): virtual drive state (optimal | recovery | offline | degraded | degraded_partially)
         """
         args = [
             'show'
         ]
         state = self._response_properties(self._run(args))['State']
-        if state == 'Optl':
-            return 'optimal'
-        elif state == 'Rec':
-            return 'recovery'
-        elif state == 'OfLn':
-            return 'offline'
-        elif state == 'Pdgd':
-            return 'degraded_partially'
-        return 'degraded'
+
+        return VDState.from_string(state)
+
+    @property
+    def access(self) -> VDAccess:
+        """(VDAccess): virtual drive acess (RO,RW,...)
+        """
+        args = [
+            'show'
+        ]
+        access = self._response_properties(self._run(args))['Access']
+
+        return VDAccess.from_string(access)
+
+    @access.setter
+    def access(self, access: VDAccess):
+        args = [
+            'set',
+            'accesspolicy={}'.format(access.value)
+        ]
+        self._run(args)
 
     @property
     def strip(self):
