@@ -143,14 +143,14 @@ class ControllerMetrics(object):
             if not encl.has_drives:
                 continue
             for drive in encl.drives:
-                if not drive.state in ('good', 'online', 'ghs', 'dhs'):
+                if not drive.state.is_good():
                     if drive.state in drives:
                         drives[drive.state] += 1
                     else:
                         drives[drive.state] = 1
 
         # convert counter to string
-        return {k: str(v) for k, v in drives.items()}
+        return {str(k): str(v) for k, v in drives.items()}
 
     @property
     @common.stringify
