@@ -1,3 +1,7 @@
+Version 0.6.3
+=============
+- Bugfix: `pystorcli` package was incomplete. (submodules were missing)
+
 Version 0.6.2
 =============
 
