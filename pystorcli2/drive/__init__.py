@@ -7,12 +7,12 @@
 '''StorCLI drive python module
 '''
 
-from . import StorCLI
-from . import common
-from . import controller
-from . import enclosure
-from . import virtualdrive
-from . import exc
+from .. import StorCLI
+from .. import common
+from .. import controller
+from .. import enclosure
+from .. import virtualdrive
+from .. import exc
 
 from typing import Union, List, Optional
 from enum import Enum
@@ -912,7 +912,7 @@ class Drives(object):
             drive_id_begin = str(drive_id_begin)
 
         # get the list of drives
-        drive_ids = []
+        drive_ids: List[int] = []
         for drive_id in drive_id_begin.split(','):
             if '-' in drive_id:
                 range_begin = drive_id.split('-')[0]
