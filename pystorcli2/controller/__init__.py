@@ -11,6 +11,7 @@ from .. import StorCLI
 from .. import common
 from .. import enclosure
 from .. import virtualdrive
+from .. import foreignconfig
 from .. import exc
 
 from datetime import datetime
@@ -36,6 +37,7 @@ class Controller(object):
         metrics (:obj:ControllerMetrics): controller metrics
         vds (list of :obj:virtualdrive.VirtualDrives): controller virtual drives
         encls (:obj:enclosure.Enclosures): controller enclosures
+        fcs (:obj:foreignconfig:ForeignConfigurations): controller foreign configurations
         autorebuild (dict): current auto rebuild state (also setter)
         foreignautoimport (dict): imports foreign configuration automatically at boot (also setter)
         patrolread (dict): current patrol read settings (also setter)
@@ -124,6 +126,12 @@ class Controller(object):
         """(:obj:enclosure.Enclosures): controller enclosures
         """
         return enclosure.Enclosures(ctl_id=self._ctl_id, binary=self._binary)
+
+    @property
+    def fcs(self):
+        """(:obj:foreignconfig.ForeignConfigurations): controller foreign configurations
+        """
+        return foreignconfig.ForeignConfigurations(ctl_id=self._ctl_id, binary=self._binary)
 
     @property
     def drives_ids(self) -> List[str]:
