@@ -12,6 +12,7 @@ from .. import common
 from .. import controller
 from .. import exc
 
+from typing import Optional
 
 class ForeignConfigurations(object):
     """StorCLI foreign configurations
@@ -99,7 +100,7 @@ class ForeignConfigurations(object):
             pass
         return False
 
-    def delete_foreign_configurations(self, securitykey: str = None):
+    def delete_foreign_configurations(self, securitykey: Optional[str] = None):
         """Deletes a foreign configuration
 
         Returns:
@@ -113,7 +114,7 @@ class ForeignConfigurations(object):
             args.append(f'securitykey={securitykey}')
         return common.response_cmd(self._run(args))
 
-    def import_foreign_configurations(self, securitykey: str = None):
+    def import_foreign_configurations(self, securitykey: Optional[str] = None):
         """Imports a foreign configuration
 
         Returns:
