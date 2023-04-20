@@ -32,9 +32,6 @@ class ForeignConfigurations(object):
         import (dict): imports the foreign configurations of a controller
         delete (dict): deletes the foreign configuration of a controller
 
-    TODO:
-        implement missing property
-            has_fcs (bool): true if there are foreign configurations
     """
 
     def __init__(self, ctl_id: int, binary: str = 'storcli64'):
@@ -86,7 +83,23 @@ class ForeignConfigurations(object):
         ]
         return common.response_data(self._run(args))
 
-    def delete_fcs(self, securitykey: str = None):
+    @property
+    def has_foreign_configurations(self) -> bool:
+        """(bool): true if controller has foreign configurations
+        """
+        args = [
+            'show'
+        ]
+
+        try:
+            fcs = common.response_data(self._run(args))['Total foreign Drive Groups']
+            if fcs > 0:
+                return True
+        except KeyError:
+            pass
+        return False
+
+    def delete_foreign_configurations(self, securitykey: str = None):
         """Deletes a foreign configuration
 
         Returns:
@@ -100,7 +113,7 @@ class ForeignConfigurations(object):
             args.append(f'securitykey={securitykey}')
         return common.response_cmd(self._run(args))
 
-    def import_fcs(self, securitykey: str = None):
+    def import_foreign_configurations(self, securitykey: str = None):
         """Imports a foreign configuration
 
         Returns:
