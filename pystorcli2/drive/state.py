@@ -120,6 +120,8 @@ class DriveState(Enum):
 
         alias = {
             'good': DriveState.UGood,
+            'bad': DriveState.UBad,
+            'dedicated': DriveState.DHS,
             'hotspare': DriveState.GHS,
             'unconfigured': DriveState.UGood,
             'unconfigured(good)': DriveState.UGood,
