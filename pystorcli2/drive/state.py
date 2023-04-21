@@ -117,7 +117,24 @@ class DriveState(Enum):
     @staticmethod
     def from_string(status: str) -> 'DriveState':
         """Get DriveState from string"""
+
+        alias = {
+            'good': DriveState.UGood,
+            'bad': DriveState.UBad,
+            'dedicated': DriveState.DHS,
+            'hotspare': DriveState.GHS,
+            'unconfigured': DriveState.UGood,
+            'unconfigured(good)': DriveState.UGood,
+            'unconfigured(bad)': DriveState.UBad,
+        }
+
+        # check for direct match
         for drive_status in DriveState:
             if drive_status.name.lower() == status.lower() or drive_status.value.lower() == status.lower():
                 return drive_status
+
+        # check for alias
+        if status.lower() in alias:
+            return alias[status.lower()]
+
         raise ValueError('Invalid drive status: {0}'.format(status))

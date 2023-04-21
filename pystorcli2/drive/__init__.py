@@ -420,8 +420,10 @@ class Drive(object):
         """ Set drive state
         """
         # if DriveState, get the string value
-        if isinstance(value, DriveState):
-            value = value.settable_str()
+        if isinstance(value, str):
+            value = DriveState.from_string(value)
+
+        value = value.settable_str()
 
         args = [
             'set',

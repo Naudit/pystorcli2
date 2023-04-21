@@ -1,3 +1,7 @@
+Version 0.6.4
+=============
+- Added some aliases to `drive.state` & `drive.set_state` method. (PR [#12](https://github.com/Naudit/pystorcli2/pull/12))
+
 Version 0.6.3
 =============
 - Bugfix: `pystorcli` package was incomplete. (submodules were missing)
