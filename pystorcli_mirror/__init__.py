@@ -12,5 +12,4 @@ from pystorcli2 import *
 from pystorcli2.version import __version__
 
 __all__ = ['__version__', 'StorCLI', 'Controller', 'Controllers',
-           'Enclosure', 'Enclosures', 'Drive', 'Drives', 'VirtualDrive', 'VirtualDrives',
-           'ForeignConfigurations']
+           'Enclosure', 'Enclosures', 'Drive', 'Drives', 'VirtualDrive', 'VirtualDrives']

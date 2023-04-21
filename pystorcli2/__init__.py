@@ -13,7 +13,6 @@ from .controller import Controller, Controllers
 from .enclosure import Enclosure, Enclosures
 from .drive import DriveState, Drive, Drives
 from .virtualdrive import VirtualDrive, VirtualDrives
-from .foreignconfig import ForeignConfigurations
 
 __all__ = ['__version__', 'StorCLI', 'Controller', 'Controllers',
-           'Enclosure', 'Enclosures', 'DriveState', 'Drive', 'Drives', 'VirtualDrive', 'VirtualDrives', 'ForeignConfigurations']
+           'Enclosure', 'Enclosures', 'DriveState', 'Drive', 'Drives', 'VirtualDrive', 'VirtualDrives']
