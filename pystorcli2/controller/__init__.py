@@ -459,7 +459,7 @@ class Controller(object):
         """
         args = [
             '/fall',
-            'del'
+            'import'
         ]
         if securitykey:
             args.append(f'securitykey={securitykey}')
