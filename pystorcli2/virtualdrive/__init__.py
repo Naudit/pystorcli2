@@ -67,7 +67,6 @@ class VirtualDrive(object):
         cc_resume (dict): resumes consistency check on a virtual drive
         cc_stop (dict): stops consistency check if running on a virtual drive
         cc_running (bool): check if consistency check is running on a virtual drive
-        cc_progress (str): % progress of the consistency check operation
     """
 
     def __init__(self, ctl_id, vd_id, binary='storcli64'):
@@ -106,7 +105,7 @@ class VirtualDrive(object):
         return common.response_data(out)['VD{0} Properties'.format(self._vd_id)]
 
     @staticmethod
-    def _resposne_operation_status(out):
+    def _response_operation_status(out):
         return common.response_data(out)['VD Operation Status'][0]
 
     @property
@@ -429,7 +428,6 @@ class VirtualDrive(object):
         return 'cached'
 
     @iopolicy.setter
-    @common.lower
     def iopolicy(self, value):
         """
         """
@@ -455,7 +453,7 @@ class VirtualDrive(object):
             'show',
             'autobgi'
         ]
-        return self._resposne_operation_status(self._run(args))['AutoBGI']
+        return self._response_operation_status(self._run(args))['AutoBGI']
 
     @autobgi.setter
     def autobgi(self, value):
@@ -514,7 +512,7 @@ class VirtualDrive(object):
             'init'
         ]
 
-        status = self._resposne_operation_status(self._run(args))['Status']
+        status = self._response_operation_status(self._run(args))['Status']
         return bool(status == 'In progress')
 
     def erase_start(self, mode='simple'):
@@ -562,7 +560,7 @@ class VirtualDrive(object):
             'erase'
         ]
 
-        status = self._resposne_operation_status(self._run(args))['Status']
+        status = self._response_operation_status(self._run(args))['Status']
         return bool(status == 'In progress')
 
     @property
@@ -578,7 +576,7 @@ class VirtualDrive(object):
             'erase'
         ]
 
-        progress = self._resposne_operation_status(self._run(args))[
+        progress = self._response_operation_status(self._run(args))[
             'Progress%']
         if progress == '-':
             return "100"
@@ -648,7 +646,7 @@ class VirtualDrive(object):
             'migrate'
         ]
 
-        status = self._resposne_operation_status(self._run(args))['Status']
+        status = self._response_operation_status(self._run(args))['Status']
         return bool(status == 'In progress')
 
     def cc_start(self, force=False):
@@ -716,25 +714,8 @@ class VirtualDrive(object):
             'cc'
         ]
 
-        status = self._resposne_operation_status(self._run(args))['Status']
+        status = self._response_operation_status(self._run(args))['Status']
         return bool(status == 'In progress')
-
-    @property
-    def cc_progress(self):
-        """Show virtual drive consistency check progress in percentage
-
-        Returns:
-            (str): progress in percentage
-        """
-
-        args = [
-            'show',
-            'cc'
-        ]
-
-        progress = self._resposne_operation_status(self._run(args))[
-            'Progress%']
-        return progress
 
 
 class VirtualDrives(object):
