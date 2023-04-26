@@ -419,14 +419,16 @@ class Controller(object):
 
         return common.response_setter(self._run(args))
 
-    @property
-    def has_foreign_configurations(self) -> bool:
+    def has_foreign_configurations(self, securitykey: Optional[str] = None) -> bool:
         """(bool): true if controller has foreign configurations
         """
         args = [
             '/fall',
             'show'
         ]
+
+        if securitykey:
+            args.append(f'securitykey={securitykey}')
 
         try:
             fcs = common.response_data(self._run(args))['Total foreign Drive Groups']
