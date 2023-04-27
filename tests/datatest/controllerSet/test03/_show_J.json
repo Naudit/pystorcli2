@@ -1,0 +1,40 @@
+{
+	"Controllers": [
+		{
+			"Command Status": {
+				"CLI Version": "007.2309.0000.0000 Sep 16, 2022",
+				"Operating system": "Linux 5.4.0-99-generic",
+				"Controller": 0,
+				"Status": "Failure",
+				"Description": "None",
+				"Detailed Status": [
+					{
+						"Ctrl": 0,
+						"Status": "Failed",
+						"ErrCd": 59,
+						"ErrMsg": "Incomplete foreign configuration"
+					}
+				]
+			},
+			"Response Data": {
+				"Number of Controllers": 1,
+				"Host Name": "ubuntu20-cuda",
+				"Operating System ": "Linux 5.4.0-99-generic",
+				"StoreLib IT Version": "07.2400.0200.0100",
+				"StoreLib IR3 Version": "16.14-0",
+				"IT System Overview": [
+					{
+						"Ctl": 0,
+						"Model": "HBA 9400-16i",
+						"AdapterType": "  SAS3416(B0)",
+						"VendId": 4096,
+						"DevId": 172,
+						"SubVendId": 4096,
+						"SubDevId": 12288,
+						"PCI Address": "00:3b:00:00"
+					}
+				]
+			}
+		}
+	]
+}
