@@ -79,8 +79,10 @@ def response_setter(data):
     Returns:
         str: cmd detailed status value
     """
-    return data['Controllers'][0]['Command Status']
-    # return response_cmd(data)['Detailed Status'][0]['Value']
+    if 'Controllers' in data:
+        return data['Controllers'][0]['Command Status']
+    else:
+        return response_cmd(data)['Detailed Status'][0]['Value']
 
 
 def lower(func):
