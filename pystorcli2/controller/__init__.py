@@ -443,7 +443,7 @@ class Controllers(object):
 
     @ property
     def _ctl_ids(self) -> List[str]:
-        out = self._storcli.run(['show'])
+        out = self._storcli.run(['show'], allow_error_codes=[59])
         response = common.response_data(out)
 
         if "Number of Controllers" in response and response["Number of Controllers"] == 0:

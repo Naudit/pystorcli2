@@ -14,7 +14,7 @@ import shutil
 import threading
 import subprocess
 import pystorcli2
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 
 from . import common
 from . import exc
@@ -128,25 +128,38 @@ class StorCLI(object):
             self.__response_cache = value
 
     @staticmethod
-    def check_response_status(cmd, out):
+    def check_response_status(cmd: List[str], out: Dict[str, Dict[int, Dict[str, Any]]], allow_error_codes: List[int]) -> bool:
         """Check ouput command line status from storcli.
 
         Args:
             cmd (list of str): full command line
             out (dict): output from command line
+            raise_on_error (bool): raise exception on error (default: True)
+
+        Returns:
+            bool: True if no error found in output. False if error found but allowed. Raise exception otherwise.
 
         Raises:
-            StorCliCmdError
+            StorCliCmdError: if error found in output and not allowed
         """
         cmd_status = common.response_cmd(out)
         if cmd_status['Status'] == 'Failure':
             if 'Detailed Status' in cmd_status:
+                # Check if the error code is allowed
+                for error in cmd_status['Detailed Status']:
+                    if 'ErrCd' in error:
+                        if error['ErrCd'] in allow_error_codes:
+                            return False
+
+                # Otherwise, raise an exception
                 raise exc.StorCliCmdError(
                     cmd, "{0}".format(cmd_status['Detailed Status']))
             else:
                 raise exc.StorCliCmdError(cmd, "{0}".format(cmd_status))
 
-    def run(self, args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs):
+        return True
+
+    def run(self, args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, allow_error_codes: List[int] = [], **kwargs):
         """Execute storcli command line with arguments.
 
         Run command line and check output for errors.
@@ -155,6 +168,7 @@ class StorCLI(object):
             args (list of str): cmd line arguments (without binary)
             stdout (fd): controll subprocess stdout fd
             stderr (fd): controll subporcess stderr fd
+            allow_error_codes (list of int): list of error codes to allow
             **kwargs: arguments to subprocess run
 
         Returns:
@@ -181,7 +195,8 @@ class StorCLI(object):
                     args=cmd, stdout=stdout, stderr=stderr, universal_newlines=True, **kwargs)
                 try:
                     ret_json = json.loads(ret.stdout)
-                    self.check_response_status(cmd, ret_json)
+                    self.check_response_status(
+                        cmd, ret_json, allow_error_codes)
                     ret.check_returncode()
                     if self.cache_enable:
                         self.__response_cache[cmd_cache_key] = ret_json
