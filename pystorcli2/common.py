@@ -7,10 +7,10 @@
 '''Common
 '''
 
-from typing import List
+from typing import Any, Dict, List
 
 
-def response_data(data):
+def response_data(data: Dict[str, Dict[int, Dict[str, Any]]]):
     """StorCLI json output parser for respone data.
 
     Args:
@@ -22,7 +22,7 @@ def response_data(data):
     return data['Controllers'][0]['Response Data']
 
 
-def response_data_subkey(data, subset: List[str]):
+def response_data_subkey(data: Dict[str, Dict[int, Dict[str,  Any]]], subset: List[str]):
     """StorCLI json output parser for respone data.
        Also, it returs the data filtered by the first key found from the subset list.
 
@@ -45,7 +45,7 @@ def response_data_subkey(data, subset: List[str]):
     return ret
 
 
-def response_property(data):
+def response_property(data: Dict[str,  Any]):
     """StorCLI json output parser for property.
 
     Args:
@@ -58,7 +58,7 @@ def response_property(data):
     return response_data(data)['Controller Properties']
 
 
-def response_cmd(data):
+def response_cmd(data: Dict[str, Dict[int, Dict[str,  Any]]]):
     """StorCLI json output parser for general cmd status.
 
     Args:
@@ -70,7 +70,7 @@ def response_cmd(data):
     return data['Controllers'][0]['Command Status']
 
 
-def response_setter(data):
+def response_setter(data: Dict[str, Dict[int, Dict[str,  Any]]]):
     """StorCLI json output parser for set cmd status.
 
     Args:
