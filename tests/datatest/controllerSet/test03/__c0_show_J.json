@@ -2,11 +2,19 @@
 	"Controllers": [
 		{
 			"Command Status": {
-				"CLI Version": "007.1704.0000.0000 Jan 16, 2021",
-				"Operating system": "Linux 5.15.0-58-generic",
+				"CLI Version": "007.2309.0000.0000 Sep 16, 2022",
+				"Operating system": "Linux 5.4.0-99-generic",
 				"Controller": 0,
-				"Status": "Success",
-				"Description": "None"
+				"Status": "Failure",
+				"Description": "None",
+				"Detailed Status": [
+					{
+						"Ctrl": 0,
+						"Status": "Failed",
+						"ErrCd": 59,
+						"ErrMsg": "Incomplete foreign configuration"
+					}
+				]
 			},
 			"Response Data": {
 				"Product Name": "Intel(R) RAID Controller RS3DC080",

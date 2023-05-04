@@ -76,7 +76,7 @@ class Controller(object):
     def _run(self, args, **kwargs):
         args = args[:]
         args.insert(0, self._name)
-        return self._storcli.run(args, **kwargs)
+        return self._storcli.run(args, allow_error_codes=[59], **kwargs)
 
     def _exist(self):
         try:
