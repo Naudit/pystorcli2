@@ -442,7 +442,7 @@ class Controllers(object):
         self._storcli = StorCLI(binary)
 
     @ property
-    def _ctl_ids(self) -> List[str]:
+    def _ctl_ids(self) -> List[int]:
         out = self._storcli.run(['show'], allow_error_codes=[59])
         response = common.response_data(out)
 
