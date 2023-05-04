@@ -9,6 +9,10 @@
 
 import subprocess
 
+from .errors import StorcliError
+
+from typing import List
+
 
 class StorCliError(Exception):
     """StorCLI general exception
@@ -20,9 +24,20 @@ class StorCliCmdError(StorCliError):
     """StorCLI command output error
     """
 
-    def __init__(self, cmd, msg):
+    def __init__(self, cmd: List[str], msg: str):
         msg = msg.lstrip().rstrip()
         super().__init__("Command '{0}' error: {1}".format(' '.join(cmd), msg))
+
+
+class StorCliCmdErrorCode(StorCliCmdError):
+    """StorCLI command output error
+    """
+
+    def __init__(self, cmd: List[str], error_code: StorcliError):
+        self.error_code = error_code
+
+        super().__init__(cmd, "{0} ({1})".format(
+            error_code.value, error_code.description))
 
 
 class StorCliMissingError(StorCliError):

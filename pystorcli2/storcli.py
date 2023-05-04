@@ -142,19 +142,29 @@ class StorCLI(object):
 
         Raises:
             StorCliCmdError: if error found in output and not allowed
+            StorCliCmdErrorCode: if error code found in output and not allowed
         """
         cmd_status = common.response_cmd(out)
         if cmd_status['Status'] == 'Failure':
             if 'Detailed Status' in cmd_status:
+                allowed_errors = True
                 # Check if the error code is allowed
                 for error in cmd_status['Detailed Status']:
+
                     if 'ErrCd' in error:
-                        if StorcliError.get(error['ErrCd']) in allow_error_codes:
-                            return False
+                        if StorcliError.get(error['ErrCd']) not in allow_error_codes:
+                            allowed_errors = False
+                    else:
+                        allowed_errors = False
+
+                    if not allowed_errors:
+                        raise exc.StorCliCmdErrorCode(
+                            cmd, StorcliError.get(error['ErrCd']))
 
                 # Otherwise, raise an exception
-                raise exc.StorCliCmdError(
-                    cmd, "{0}".format(cmd_status['Detailed Status']))
+                if not allowed_errors:
+                    raise exc.StorCliCmdError(
+                        cmd, "{0}".format(cmd_status['Detailed Status']))
             else:
                 raise exc.StorCliCmdError(cmd, "{0}".format(cmd_status))
 
@@ -177,6 +187,7 @@ class StorCLI(object):
 
         Raises:
             exc.StorCliCmdError
+            exc.StorCliCmdErrorCode
             exc.StorCliRunTimeError
             exc.StorCliRunTimeout
         """
