@@ -1,7 +1,10 @@
 from enum import Enum
 
+# Got from: https://techdocs.broadcom.com/us/en/storage-and-ethernet-connectivity/enterprise-storage-solutions/12gbs-megaraid-tri-mode-software/1-0/v11685216/v11685227.html
+
 
 class StorcliError(Enum):
+    """ StorCLI error codes """
     SERROR_0 = (
         0, 'Command completed successfully.')
     SERROR_1 = (
