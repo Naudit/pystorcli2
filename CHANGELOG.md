@@ -1,6 +1,7 @@
 Version 0.6.4
 =============
 - Added some aliases to `drive.state` & `drive.set_state` method. (PR [#12](https://github.com/Naudit/pystorcli2/pull/12))
+- Added enum-class StorcliError. This Enum stores any posible (documented) error reported by storcli. We can expect & catch some of them if we want to
 
 Version 0.6.3
 =============

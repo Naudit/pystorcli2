@@ -19,6 +19,7 @@ from typing import Optional, Dict, Any, List
 from . import common
 from . import exc
 from . import cmdRunner
+from .errors import StorcliError
 
 _SINGLETON_STORCLI_MODULE_LOCK = threading.Lock()
 _SINGLETON_STORCLI_MODULE_ENABLE = False
@@ -128,7 +129,7 @@ class StorCLI(object):
             self.__response_cache = value
 
     @staticmethod
-    def check_response_status(cmd: List[str], out: Dict[str, Dict[int, Dict[str, Any]]], allow_error_codes: List[int]) -> bool:
+    def check_response_status(cmd: List[str], out: Dict[str, Dict[int, Dict[str, Any]]], allow_error_codes: List[StorcliError]) -> bool:
         """Check ouput command line status from storcli.
 
         Args:
@@ -148,7 +149,7 @@ class StorCLI(object):
                 # Check if the error code is allowed
                 for error in cmd_status['Detailed Status']:
                     if 'ErrCd' in error:
-                        if error['ErrCd'] in allow_error_codes:
+                        if StorcliError.get(error['ErrCd']) in allow_error_codes:
                             return False
 
                 # Otherwise, raise an exception
@@ -159,7 +160,7 @@ class StorCLI(object):
 
         return True
 
-    def run(self, args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, allow_error_codes: List[int] = [], **kwargs):
+    def run(self, args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, allow_error_codes: List[StorcliError] = [], **kwargs):
         """Execute storcli command line with arguments.
 
         Run command line and check output for errors.
@@ -168,7 +169,7 @@ class StorCLI(object):
             args (list of str): cmd line arguments (without binary)
             stdout (fd): controll subprocess stdout fd
             stderr (fd): controll subporcess stderr fd
-            allow_error_codes (list of int): list of error codes to allow
+            allow_error_codes (list of StorcliErrors): list of error codes to allow
             **kwargs: arguments to subprocess run
 
         Returns:

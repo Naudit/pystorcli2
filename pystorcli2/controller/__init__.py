@@ -12,6 +12,7 @@ from .. import common
 from .. import enclosure
 from .. import virtualdrive
 from .. import exc
+from ..errors import StorcliError
 
 from datetime import datetime
 from typing import List, Optional
@@ -76,7 +77,7 @@ class Controller(object):
     def _run(self, args, **kwargs):
         args = args[:]
         args.insert(0, self._name)
-        return self._storcli.run(args, allow_error_codes=[59], **kwargs)
+        return self._storcli.run(args, allow_error_codes=[StorcliError.INCOMPLETE_FOREIGN_CONFIGURATION], **kwargs)
 
     def _exist(self):
         try:
@@ -443,7 +444,8 @@ class Controllers(object):
 
     @ property
     def _ctl_ids(self) -> List[int]:
-        out = self._storcli.run(['show'], allow_error_codes=[59])
+        out = self._storcli.run(['show'], allow_error_codes=[
+                                StorcliError.INCOMPLETE_FOREIGN_CONFIGURATION])
         response = common.response_data(out)
 
         if "Number of Controllers" in response and response["Number of Controllers"] == 0:
