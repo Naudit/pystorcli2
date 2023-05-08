@@ -216,12 +216,14 @@ class StorCLI(object):
         with self.__cache_lock:
             try:
                 ret = self.__cmdrunner.run(
-                    args=cmd, stdout=stdout, stderr=stderr, universal_newlines=True, **kwargs)
+                    args=cmd, universal_newlines=True, **kwargs)
                 try:
                     ret_json = json.loads(ret.stdout)
                     self.check_response_status(
                         cmd, ret_json, allow_error_codes)
-                    ret.check_returncode()
+                    if ret.returncode != 0:
+                        raise subprocess.CalledProcessError(
+                            ret.returncode, cmd, ret.stdout, ret.stderr)
                     if self.cache_enable:
                         self.__response_cache[cmd_cache_key] = ret_json
                     return ret_json

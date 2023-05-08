@@ -10,7 +10,7 @@
 import re
 import os
 import subprocess
-from pystorcli2.cmdRunner import CMDRunner
+from pystorcli2.cmdRunner import CMDRunner, StorcliRet
 from .exceptions import StorclifileSampleNotFound
 from typing import Union, Tuple, List
 
@@ -28,7 +28,7 @@ class StorcliCMDFile(CMDRunner):
         self.storcli_path = storcli_path
         self.options: List[str] = options
 
-    def run(self, args, pass_options=False, **kwargs) -> subprocess.CompletedProcess:
+    def run(self, args, pass_options=False, **kwargs) -> StorcliRet:
         """Runs a command and returns the output.
         """
 
@@ -54,7 +54,7 @@ class StorcliCMDFile(CMDRunner):
 
         _stdout = raw_data
 
-        ret = subprocess.CompletedProcess(args, 0, _stdout, None)
+        ret = StorcliRet(_stdout, '', 0)
 
         return ret
 
