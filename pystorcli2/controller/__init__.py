@@ -41,6 +41,7 @@ class Controller(object):
         foreignautoimport (dict): imports foreign configuration automatically at boot (also setter)
         patrolread (dict): current patrol read settings (also setter)
         cc (dict): current patrol read settings (also setter)
+        has_foreign_configurations (bool): true if controller has foreign configurations
 
     Methods:
         create_vd (:obj:VirtualDrive): create virtual drive
@@ -51,6 +52,8 @@ class Controller(object):
         patrolread_stop (dict): stops patrol read if running on controller
         patrolread_running (bool): check if patrol read is running on controller
         set_cc (dict): configures consistency check mode and start time
+        import_foreign_configurations (dict): imports the foreign configurations on controller
+        delete_foreign_configurations (dict): deletes the foreign configuration on controller
 
     TODO:
         Implement missing methods:
@@ -416,6 +419,55 @@ class Controller(object):
             args.append('starttime="{0}"'.format(starttime))
 
         return common.response_setter(self._run(args))
+
+    def has_foreign_configurations(self, securitykey: Optional[str] = None) -> bool:
+        """(bool): true if controller has foreign configurations
+        """
+        args = [
+            '/fall',
+            'show'
+        ]
+
+        if securitykey:
+            args.append(f'securitykey={securitykey}')
+
+        try:
+            fcs = common.response_data(self._run(args))['Total foreign Drive Groups']
+            if fcs > 0:
+                return True
+        except KeyError:
+            pass
+        return False
+
+    def delete_foreign_configurations(self, securitykey: Optional[str] = None):
+        """Deletes foreign configurations
+
+        Returns:
+            (dict): response cmd data
+        """
+        args = [
+            '/fall',
+            'del'
+        ]
+
+        if securitykey:
+            args.append(f'securitykey={securitykey}')
+        return common.response_cmd(self._run(args))
+
+    def import_foreign_configurations(self, securitykey: Optional[str] = None):
+        """Imports foreign configurations
+
+        Returns:
+            (dict): response cmd data
+        """
+        args = [
+            '/fall',
+            'import'
+        ]
+        if securitykey:
+            args.append(f'securitykey={securitykey}')
+        return common.response_cmd(self._run(args))
+
 
 
 class Controllers(object):
