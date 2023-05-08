@@ -1,7 +1,14 @@
 Version 0.6.4
 =============
-- Added some aliases to `drive.state` & `drive.set_state` method. (PR [#12](https://github.com/Naudit/pystorcli2/pull/12))
+
+- **New features**:
+  -----------------
+- [**Controller**]        Added methods to control the foreign configuration. (PR [#11](https://github.com/Naudit/pystorcli2/pull/11))
+- [**Controller**]        Now some storcli calls can return an error and get handled without raising exceptions. (Issue [#13](https://github.com/Naudit/pystorcli2/issues/13))
+- [**Drive**]             Added some aliases to `drive.state` & `drive.set_state` method. (Issue [#12](https://github.com/Naudit/pystorcli2/issues/12))
 - Added enum-class StorcliError. This Enum stores any posible (documented) error reported by storcli. We can expect & catch some of them if we want to
+
+Thanks to @ulmitov & @dgilbert101 for the contributions to this release
 
 Version 0.6.3
 =============
