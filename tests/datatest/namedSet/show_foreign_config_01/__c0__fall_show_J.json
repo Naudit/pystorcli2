@@ -1,0 +1,17 @@
+{
+    "Controllers": [
+        {
+            "Command Status": {
+                "CLI Version": "007.2309.0000.0000 Sep 16, 2022",
+                "Operating system": "Linux 5.4.0-99-generic",
+                "Controller": 0,
+                "Status": "Failure",
+                "Description": "Incomplete foreign configuration"
+            },
+            "Response Data": {
+                "Total Foreign PDs": 15,
+                "Total Locked Foreign PDs": 0
+            }
+        }
+    ]
+}

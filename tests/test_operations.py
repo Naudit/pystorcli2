@@ -128,3 +128,19 @@ class TestStorcliOperations(TestStorcliMainClass):
         status = c._run(['show', 'events', 'file=/root/raid_events.log'])
 
         assert status['Status'] == 'Success'
+
+    @pytest.mark.parametrize("folder", getTests('show_foreign_config'))
+    def test_has_foreign_configurations(self, folder):
+        # This tests checks for reported issue #8: Storcli runner: some commands do not have json format
+
+        # get storcli
+        s: StorCLI = self.get_storcli(folder)
+        # get controller 0
+        cs: Controllers = s.controllers
+        c = cs.get_ctl(0)
+        assert c is not None
+
+        # get the foreign config
+        fc = c.has_foreign_configurations()
+
+        assert fc == True
