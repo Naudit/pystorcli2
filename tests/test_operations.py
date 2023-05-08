@@ -144,3 +144,20 @@ class TestStorcliOperations(TestStorcliMainClass):
         fc = c.has_foreign_configurations()
 
         assert fc == True
+
+    @pytest.mark.parametrize("folder", getTests('show_foreign_config'))
+    def test_is_foreign_configuration_healthy(self, folder):
+        # This tests checks for reported issue #8: Storcli runner: some commands do not have json format
+
+        # get storcli & data
+        s: StorCLI = self.get_storcli(folder)
+        data = self.get_device_data(folder)
+        # get controller 0
+        cs: Controllers = s.controllers
+        c = cs.get_ctl(0)
+        assert c is not None
+
+        # get the foreign config
+        fc = c.is_foreign_configuration_healthy()
+
+        assert fc == data['is_foreign_configuration_healthy']

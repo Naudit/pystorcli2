@@ -77,10 +77,10 @@ class Controller(object):
     def __str__(self):
         return '{0}'.format(common.response_data(self._run(['show'])))
 
-    def _run(self, args, **kwargs):
+    def _run(self, args, allow_error_codes=[StorcliError.INCOMPLETE_FOREIGN_CONFIGURATION], **kwargs):
         args = args[:]
         args.insert(0, self._name)
-        return self._storcli.run(args, allow_error_codes=[StorcliError.INCOMPLETE_FOREIGN_CONFIGURATION], **kwargs)
+        return self._storcli.run(args, allow_error_codes=allow_error_codes, **kwargs)
 
     def _exist(self):
         try:
@@ -432,12 +432,47 @@ class Controller(object):
             args.append(f'securitykey={securitykey}')
 
         try:
-            fcs = common.response_data(self._run(args))['Total foreign Drive Groups']
+            fc_data = common.response_data(self._run(args))
+            fcs = 0
+
+            if 'Total foreign Drive Groups' in fc_data:
+                fcs = int(fc_data['Total foreign Drive Groups'])
+            if 'Total Foreign PDs' in fc_data:
+                fcs += int(fc_data['Total Foreign PDs'])
+            if 'Total Locked Foreign PDs' in fc_data:
+                fcs += int(fc_data['Total Locked Foreign PDs'])
+
             if fcs > 0:
                 return True
         except KeyError:
             pass
         return False
+
+    def is_foreign_configuration_healthy(self, securitykey: Optional[str] = None) -> bool:
+        """(bool): true if controller has healthy foreign configurations
+        """
+
+        if not self.has_foreign_configurations(securitykey):
+            return True
+
+        args = [
+            '/fall',
+            'show'
+        ]
+
+        if securitykey:
+            args.append(f'securitykey={securitykey}')
+
+        try:
+            fc_data = common.response_data(
+                self._run(args, allow_error_codes=[]))
+        except exc.StorCliCmdErrorCode as e:
+            if e.error_code == StorcliError.INCOMPLETE_FOREIGN_CONFIGURATION:
+                return False
+
+            raise e
+
+        return True
 
     def delete_foreign_configurations(self, securitykey: Optional[str] = None):
         """Deletes foreign configurations
@@ -469,7 +504,6 @@ class Controller(object):
         return common.response_cmd(self._run(args))
 
 
-
 class Controllers(object):
     """StorCLI Controllers
 
@@ -497,7 +531,7 @@ class Controllers(object):
     @ property
     def _ctl_ids(self) -> List[int]:
         out = self._storcli.run(['show'], allow_error_codes=[
-                                StorcliError.INCOMPLETE_FOREIGN_CONFIGURATION])
+            StorcliError.INCOMPLETE_FOREIGN_CONFIGURATION])
         response = common.response_data(out)
 
         if "Number of Controllers" in response and response["Number of Controllers"] == 0:

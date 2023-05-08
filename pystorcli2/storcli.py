@@ -144,6 +144,7 @@ class StorCLI(object):
             StorCliCmdError: if error found in output and not allowed
             StorCliCmdErrorCode: if error code found in output and not allowed
         """
+        retcode = True
         cmd_status = common.response_cmd(out)
         if cmd_status['Status'] == 'Failure':
             if 'Detailed Status' in cmd_status:
@@ -157,6 +158,7 @@ class StorCLI(object):
                     else:
                         allowed_errors = False
 
+                    retcode = False
                     if not allowed_errors:
                         raise exc.StorCliCmdErrorCode(
                             cmd, StorcliError.get(error['ErrCd']))
@@ -166,9 +168,19 @@ class StorCLI(object):
                     raise exc.StorCliCmdError(
                         cmd, "{0}".format(cmd_status['Detailed Status']))
             else:
+                # Try to get the error code using description
+                if 'Description' in cmd_status:
+                    error_code = StorcliError.get(cmd_status['Description'])
+
+                    if error_code != StorcliError.INVALID_STATUS:
+                        if error_code not in allow_error_codes:
+                            raise exc.StorCliCmdErrorCode(cmd, error_code)
+                        else:
+                            return False
+
                 raise exc.StorCliCmdError(cmd, "{0}".format(cmd_status))
 
-        return True
+        return retcode
 
     def run(self, args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, allow_error_codes: List[StorcliError] = [], **kwargs):
         """Execute storcli command line with arguments.
