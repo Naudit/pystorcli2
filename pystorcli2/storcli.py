@@ -222,8 +222,11 @@ class StorCLI(object):
                     self.check_response_status(
                         cmd, ret_json, allow_error_codes)
                     if ret.returncode != 0:
-                        raise subprocess.CalledProcessError(
-                            ret.returncode, cmd, ret.stdout, ret.stderr)
+                        allowd_return_codes = [
+                            i.value for i in allow_error_codes]
+                        if ret.returncode not in allowd_return_codes:
+                            raise subprocess.CalledProcessError(
+                                ret.returncode, cmd, ret.stdout, ret.stderr)
                     if self.cache_enable:
                         self.__response_cache[cmd_cache_key] = ret_json
                     return ret_json
