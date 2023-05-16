@@ -9,8 +9,9 @@
 
 import re
 import os
-import subprocess
+import json
 from pystorcli2.cmdRunner import CMDRunner, StorcliRet
+from pystorcli2.errors import StorcliError
 from .exceptions import StorclifileSampleNotFound
 from typing import Union, Tuple, List
 
@@ -54,7 +55,28 @@ class StorcliCMDFile(CMDRunner):
 
         _stdout = raw_data
 
-        ret = StorcliRet(_stdout, '', 0)
+        retcode = 0
+
+        # Try to infere the return code from the output
+        try:
+            _stdout_json = json.loads(_stdout)
+            if 'Controllers' in _stdout_json:
+                for cont_json in _stdout_json['Controllers']:
+                    if 'Command Status' in cont_json:
+                        # Check if the command status is not OK
+                        if cont_json['Command Status']['Status'] != 'Success':
+                            # If Detailed Status, obtain the return code
+                            if 'Detailed Status' in cont_json['Command Status']:
+                                retcode = cont_json['Command Status']['Detailed Status']['ErrCd']
+                            else:
+                                # Otherwise, try to infere from the Description String
+                                _code_type = StorcliError.get(
+                                    cont_json['Command Status']['Description'])
+                                retcode = _code_type.value
+        except:
+            pass
+
+        ret = StorcliRet(_stdout, '', retcode)
 
         return ret
 
