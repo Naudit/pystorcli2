@@ -1,0 +1,21 @@
+{
+    "Controllers": [
+        {
+            "Command Status": {
+                "CLI Version": "007.2408.0000.0000 Nov 15, 2022",
+                "Operating system": "Linux 5.15.0-25-generic",
+                "Controller": 0,
+                "Status": "Failure",
+                "Description": "Set Drive Good Failed.",
+                "Detailed Status": [
+                    {
+                        "Drive": "/c0/e252/s7",
+                        "Status": "Failure",
+                        "ErrCd": 255,
+                        "ErrMsg": "Operation not allowed."
+                    }
+                ]
+            }
+        }
+    ]
+}

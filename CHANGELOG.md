@@ -1,3 +1,10 @@
+Version 0.6.5
+=============
+- **Changes**:
+  ----------
+  - [**Storcli.errors**]    Custom messages for error 255. Requested by @ulmitov in Issue [#17](https://github.com/Naudit/pystorcli2/issues/17)
+
+
 Version 0.6.4
 =============
 

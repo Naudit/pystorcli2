@@ -11,7 +11,7 @@ import re
 import os
 import json
 from pystorcli2.cmdRunner import CMDRunner, StorcliRet
-from pystorcli2.errors import StorcliError
+from pystorcli2.errors import StorcliErrorCode
 from .exceptions import StorclifileSampleNotFound
 from typing import Union, Tuple, List
 
@@ -67,10 +67,10 @@ class StorcliCMDFile(CMDRunner):
                         if cont_json['Command Status']['Status'] != 'Success':
                             # If Detailed Status, obtain the return code
                             if 'Detailed Status' in cont_json['Command Status']:
-                                retcode = cont_json['Command Status']['Detailed Status']['ErrCd']
+                                retcode = cont_json['Command Status']['Detailed Status'][0]['ErrCd']
                             else:
                                 # Otherwise, try to infere from the Description String
-                                _code_type = StorcliError.get(
+                                _code_type = StorcliErrorCode.get(
                                     cont_json['Command Status']['Description'])
                                 retcode = _code_type.value
         except:

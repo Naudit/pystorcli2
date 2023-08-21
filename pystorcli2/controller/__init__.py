@@ -12,7 +12,7 @@ from .. import common
 from .. import enclosure
 from .. import virtualdrive
 from .. import exc
-from ..errors import StorcliError
+from ..errors import StorcliErrorCode
 
 from datetime import datetime
 from typing import List, Optional
@@ -77,7 +77,7 @@ class Controller(object):
     def __str__(self):
         return '{0}'.format(common.response_data(self._run(['show'])))
 
-    def _run(self, args, allow_error_codes=[StorcliError.INCOMPLETE_FOREIGN_CONFIGURATION], **kwargs):
+    def _run(self, args, allow_error_codes=[StorcliErrorCode.INCOMPLETE_FOREIGN_CONFIGURATION], **kwargs):
         args = args[:]
         args.insert(0, self._name)
         return self._storcli.run(args, allow_error_codes=allow_error_codes, **kwargs)
@@ -467,7 +467,7 @@ class Controller(object):
             fc_data = common.response_data(
                 self._run(args, allow_error_codes=[]))
         except exc.StorCliCmdErrorCode as e:
-            if e.error_code == StorcliError.INCOMPLETE_FOREIGN_CONFIGURATION:
+            if e.error_code == StorcliErrorCode.INCOMPLETE_FOREIGN_CONFIGURATION:
                 return False
 
             raise e
@@ -531,7 +531,7 @@ class Controllers(object):
     @ property
     def _ctl_ids(self) -> List[int]:
         out = self._storcli.run(['show'], allow_error_codes=[
-            StorcliError.INCOMPLETE_FOREIGN_CONFIGURATION])
+            StorcliErrorCode.INCOMPLETE_FOREIGN_CONFIGURATION])
         response = common.response_data(out)
 
         if "Number of Controllers" in response and response["Number of Controllers"] == 0:

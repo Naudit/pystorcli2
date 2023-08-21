@@ -12,6 +12,8 @@ import pytest
 from typing import List
 
 from pystorcli2 import StorCLI, Controllers, Controller, VirtualDrives, VirtualDrive, Enclosures, Enclosure, Drives, Drive, DriveState
+from pystorcli2.errors import StorcliErrorCode
+from pystorcli2.exc import StorCliCmdErrorCode
 from .baseTest import TestStorcliMainClass
 
 
@@ -161,3 +163,27 @@ class TestStorcliOperations(TestStorcliMainClass):
         fc = c.is_foreign_configuration_healthy()
 
         assert fc == data['is_foreign_configuration_healthy']
+
+    @pytest.mark.parametrize("folder", getTests('error_codes'))
+    def test_error_codes(self, folder):
+        # This test check that error codes are handled correctly
+
+        # get storcli & data
+        s: StorCLI = self.get_storcli(folder)
+        data = self.get_device_data(folder)
+
+        # Try to run a lowlevel command
+        with pytest.raises(StorCliCmdErrorCode) as excinfo:
+            s.run(data['command_to_test'])
+
+        exc = excinfo.value
+
+        # check for the expected error code
+        assert exc.error_code.id == data['error_code']
+
+        # check for custom error message
+        if 'custom_error_message' in data:
+            assert exc.error_code.detailed_description == data['custom_error_message']
+
+        # Check everything is ok with the error code enum
+        assert exc.error_code == StorcliErrorCode.get(exc.error_code.id)

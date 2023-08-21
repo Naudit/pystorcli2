@@ -1,0 +1,10 @@
+{
+    "Controller_ids": [
+        0
+    ],
+    "command_to_test": [
+        "/c0",
+        "show"
+    ],
+    "error_code": 59
+}

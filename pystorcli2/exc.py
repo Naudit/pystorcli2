@@ -9,7 +9,7 @@
 
 import subprocess
 
-from .errors import StorcliError
+from .errors import StorcliErrorCode
 
 from typing import List
 
@@ -33,7 +33,7 @@ class StorCliCmdErrorCode(StorCliCmdError):
     """StorCLI command output error
     """
 
-    def __init__(self, cmd: List[str], error_code: StorcliError):
+    def __init__(self, cmd: List[str], error_code: StorcliErrorCode):
         self.error_code = error_code
 
         super().__init__(cmd, "{0} ({1})".format(

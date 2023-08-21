@@ -1,0 +1,12 @@
+{
+    "Controller_ids": [
+        0
+    ],
+    "command_to_test": [
+        "/c0/e252/s7",
+        "set",
+        "good"
+    ],
+    "error_code": 255,
+    "custom_error_message": "Operation not allowed."
+}

@@ -1,11 +1,11 @@
 from enum import Enum
 
-from typing import Union
+from typing import Union, Optional
 
 # Got from: https://techdocs.broadcom.com/us/en/storage-and-ethernet-connectivity/enterprise-storage-solutions/12gbs-megaraid-tri-mode-software/1-0/v11685216/v11685227.html
 
 
-class StorcliError(Enum):
+class StorcliErrorCode(Enum):
     """ StorCLI error codes """
     SERROR_0 = (
         0, '', 'Command completed successfully.')
@@ -352,8 +352,16 @@ class StorcliError(Enum):
     INVALID_STATUS = (
         255, '', 'Invalid status - used for polling command completion.')
 
+    def __init__(self, value: int, description: str, detailed_description: str):
+        self.__custom_description: Optional[str] = None
+        super().__init__(value, description, detailed_description)
+
     @property
     def value(self) -> int:
+        return self._value_[0]
+
+    @property
+    def id(self) -> int:
         return self._value_[0]
 
     @property
@@ -365,17 +373,31 @@ class StorcliError(Enum):
 
     @property
     def detailed_description(self) -> str:
-        return self._value_[2]
+        if self.__custom_description is not None and self.value == 255:
+            return self.__custom_description
+        else:
+            return self._value_[2]
+
+    @detailed_description.setter
+    def detailed_description(self, value: str):
+        self.__custom_description = value
 
     def __str__(self):
         return self.description
 
     @staticmethod
-    def get(value: Union[int, str]):
+    def get(value: Union[int, str], custom_description: Optional[str] = None) -> 'StorcliErrorCode':
         """Pass an integer value to get the corresponding error code."""
+        ret = StorcliErrorCode.INVALID_STATUS
 
-        for e in StorcliError:
+        for e in StorcliErrorCode:
             if e.value == value or e.description == value or e.detailed_description == value:
-                return e
+                ret = e
+                break
 
-        return StorcliError.INVALID_STATUS
+        # Try to assign custom description
+        if ret.value == 255:
+            if custom_description is not None:
+                ret.detailed_description = custom_description
+
+        return ret
