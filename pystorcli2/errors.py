@@ -354,7 +354,7 @@ class StorcliErrorCode(Enum):
 
     def __init__(self, value: int, description: str, detailed_description: str):
         self.__custom_description: Optional[str] = None
-        super().__init__(value, description, detailed_description)
+        super().__init__()
 
     @property
     def value(self) -> int:
