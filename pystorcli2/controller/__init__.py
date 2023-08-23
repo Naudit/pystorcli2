@@ -101,6 +101,43 @@ class Controller(object):
         """
         return self._name
 
+    @ property
+    def show(self) -> dict:
+        """Static show output to allow getting info of static attributes
+        without the need to touch cached responses
+        Return:
+            dict: controller data from show command
+        """
+        if not getattr(self, '_show', None):
+            out = self._storcli.run(['show'], allow_error_codes=[
+                StorcliErrorCode.INCOMPLETE_FOREIGN_CONFIGURATION])
+            self._show = common.response_data(out)
+        return self._show
+    
+    @ property
+    def serial(self):
+        """ (str): get serial number
+        """
+        return self.show['Serial Number']
+
+    @ property
+    def model(self):
+        """ (str): get model
+        """
+        return self.show['Product Name']
+
+    @ property
+    def pci_address(self):
+        """ (str): get pci address
+        """
+        return self.show['PCI Address']
+    
+    @ property
+    def sas_address(self):
+        """ (str): get sas address
+        """
+        return self.show['SAS Address']
+
     @property
     def facts(self):
         """ (dict): raw controller facts
@@ -572,17 +609,20 @@ class Controllers(object):
 
     @ property
     def show(self) -> List[dict]:
-        """
+        """Static show output to allow getting info of static attributes
+        without the need to touch cached responses
         Return:
             list: list of dicts of controllers data from show command
         """
-        out = self._storcli.run(['show'], allow_error_codes=[
-            StorcliErrorCode.INCOMPLETE_FOREIGN_CONFIGURATION])
-        response = common.response_data(out)
-
-        if "Number of Controllers" in response and response["Number of Controllers"] == 0:
-            return []
-        return common.response_data_subkey(out, ['System Overview', 'IT System Overview'])
+        if not getattr(self, '_show', None):
+            out = self._storcli.run(['show'], allow_error_codes=[
+                StorcliErrorCode.INCOMPLETE_FOREIGN_CONFIGURATION])
+            response = common.response_data(out)
+            if "Number of Controllers" in response and response["Number of Controllers"] == 0:
+                self._show = []
+            else:
+                self._show = common.response_data_subkey(out, ['System Overview', 'IT System Overview'])
+        return self._show
 
     @ property
     def _ctl_ids(self) -> List[int]:
