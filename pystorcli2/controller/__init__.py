@@ -102,7 +102,7 @@ class Controller(object):
         return self._name
 
     @ property
-    def show(self) -> dict:
+    def show(self):
         """Static show output to allow getting info of static attributes
         without the need to touch cached responses
         Return:
@@ -118,25 +118,25 @@ class Controller(object):
     def serial(self):
         """ (str): get serial number
         """
-        return self.show['Serial Number']
+        return self.show.get('Serial Number', '')
 
     @ property
     def model(self):
         """ (str): get model
         """
-        return self.show['Product Name']
+        return self.show.get('Product Name', '')
 
     @ property
     def pci_address(self):
         """ (str): get pci address
         """
-        return self.show['PCI Address']
+        return self.show.get('PCI Address', '')
     
     @ property
     def sas_address(self):
         """ (str): get sas address
         """
-        return self.show['SAS Address']
+        return self.show.get('SAS Address', '')
 
     @property
     def facts(self):
