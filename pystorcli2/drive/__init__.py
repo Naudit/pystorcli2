@@ -6,6 +6,7 @@
 
 '''StorCLI drive python module
 '''
+import humanfriendly
 
 from .. import StorCLI
 from .. import common
@@ -146,12 +147,29 @@ class Drive(object):
 
     @property
     def size(self):
-        """(str): drive size
+        """(str): drive size in bytes (pysmart compliance)
         """
         args = [
             'show'
         ]
-        return self._response_properties(self._run(args))['Size']
+        size = self._response_properties(self._run(args))['Size']
+        return humanfriendly.parse_size(size)
+
+    @property
+    def capacity(self):
+        """Size in human readable format (pysmart compliance)
+        """
+        return humanfriendly.format_size(getattr(self, 'size', ''))
+
+    @property
+    @common.upper
+    def block_size(self):
+        """(str): block size 4KB / 512B
+        """
+        args = [
+            'show'
+        ]
+        return self._response_properties(self._run(args))['SeSz'].replace(' ', '').strip()
 
     @property
     @common.upper

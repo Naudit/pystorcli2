@@ -503,6 +503,48 @@ class Controller(object):
             args.append(f'securitykey={securitykey}')
         return common.response_cmd(self._run(args))
 
+    def set_controller_mode(self, mode):
+        """Set controller mode command
+
+        Returns:
+            (dict): response cmd data
+        """
+        args = [
+            'set',
+            f'personality={mode}'
+        ]
+        return common.response_cmd(self._run(args))
+
+    def delete_vds(self):
+        """Delete all virtual drives
+
+        Returns:
+            (dict): response cmd data
+        """
+        args = [
+            '/vall',
+            'delete'
+        ]
+        return common.response_cmd(self._run(args))
+
+    @property
+    def phyerrorcounters(self):
+        """Get Phy Error Counters
+
+        Returns:
+            (dict): response cmd data
+        """
+        args = [
+            '/pall',
+            'show'
+        ]
+        try:
+            # RAID
+            return common.response_data(self._run(args + ['all']))['Phy Error Counters']
+        except exc.StorCliCmdError:
+            # HBA
+            return common.response_data(self._run(args + ['phyerrorcounters']))
+
 
 class Controllers(object):
     """StorCLI Controllers
@@ -529,15 +571,23 @@ class Controllers(object):
         self._storcli = StorCLI(binary)
 
     @ property
-    def _ctl_ids(self) -> List[int]:
+    def show(self) -> List[dict]:
+        """
+        Return:
+            list: list of dicts of controllers data from show command
+        """
         out = self._storcli.run(['show'], allow_error_codes=[
             StorcliErrorCode.INCOMPLETE_FOREIGN_CONFIGURATION])
         response = common.response_data(out)
 
         if "Number of Controllers" in response and response["Number of Controllers"] == 0:
             return []
-        else:
-            return [ctl['Ctl'] for ctl in common.response_data_subkey(out, ['System Overview', 'IT System Overview'])]
+        return common.response_data_subkey(out, ['System Overview', 'IT System Overview'])
+
+    @ property
+    def _ctl_ids(self) -> List[int]:
+        out = self.show
+        return out if not out else [ctl['Ctl'] for ctl in out]
 
     @ property
     def _ctls(self):
