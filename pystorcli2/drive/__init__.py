@@ -105,6 +105,13 @@ class Drive(object):
             self._ctl_id, self._encl_id, self._slot_id)
         return common.response_data(out)[detailed_info][attr]
 
+    def __repr__(self):
+        """Define a basic representation of the class object."""
+        return '<PD {} | {}>'.format(
+            self._name,
+            ' '.join([self.serial, self.medium, self.state])
+        )
+
     def _run(self, args, **kwargs):
         args = args[:]
         args.insert(0, self._name)
@@ -159,7 +166,7 @@ class Drive(object):
     def capacity(self):
         """Size in human readable format (pysmart compliance)
         """
-        return humanfriendly.format_size(getattr(self, 'size', ''))
+        return humanfriendly.format_size(getattr(self, 'size', 0))
 
     @property
     @common.upper

@@ -103,8 +103,7 @@ class Controller(object):
 
     @ property
     def show(self):
-        """Static show output to allow getting info of static attributes
-        without the need to touch cached responses
+        """Caching show output to allow getting info of static attributes
         Return:
             dict: controller data from show command
         """
@@ -116,27 +115,21 @@ class Controller(object):
     
     @ property
     def serial(self):
-        """ (str): get serial number
+        """ (str|None): get serial number if exists
         """
-        return self.show.get('Serial Number', '')
+        return self.show.get('Serial Number')
 
     @ property
     def model(self):
-        """ (str): get model
+        """ (str|None): get model if exists
         """
-        return self.show.get('Product Name', '')
+        return self.show.get('Model')
 
     @ property
     def pci_address(self):
-        """ (str): get pci address
+        """ (str|None): get pci address if exists
         """
-        return self.show.get('PCI Address', '')
-    
-    @ property
-    def sas_address(self):
-        """ (str): get sas address
-        """
-        return self.show.get('SAS Address', '')
+        return self.show.get('PCI Address')
 
     @property
     def facts(self):
@@ -609,8 +602,7 @@ class Controllers(object):
 
     @ property
     def show(self) -> List[dict]:
-        """Static show output to allow getting info of static attributes
-        without the need to touch cached responses
+        """Caching show output to allow getting info of static attributes
         Return:
             list: list of dicts of controllers data from show command
         """
@@ -626,8 +618,9 @@ class Controllers(object):
 
     @ property
     def _ctl_ids(self) -> List[int]:
-        out = self.show
-        return out if not out else [ctl['Ctl'] for ctl in out]
+        """(list of str): controllers id
+        """
+        return [ctl['Ctl'] for ctl in self.show]
 
     @ property
     def _ctls(self):

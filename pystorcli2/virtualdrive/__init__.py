@@ -86,6 +86,13 @@ class VirtualDrive(object):
 
         self._exist()
 
+    def __repr__(self):
+        """Define a basic representation of the class object."""
+        return '<VD {} | {}>'.format(
+            self._name,
+            ' '.join([self.raid, self.capacity, self.state])
+        )
+
     def _run(self, args, **kwargs):
         args = args[:]
         args.insert(0, self._name)
@@ -156,7 +163,7 @@ class VirtualDrive(object):
     def capacity(self):
         """Size in human readable format (pysmart compliance)
         """
-        return humanfriendly.format_size(getattr(self, 'size', ''))
+        return humanfriendly.format_size(getattr(self, 'size', 0))
 
     @property
     def state(self) -> VDState:
