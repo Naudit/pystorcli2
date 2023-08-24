@@ -101,6 +101,36 @@ class Controller(object):
         """
         return self._name
 
+    @ property
+    def show(self):
+        """Caching show output to allow getting info of static attributes
+        Return:
+            dict: controller data from show command
+        """
+        if not getattr(self, '_show', None):
+            out = self._storcli.run(['show'], allow_error_codes=[
+                StorcliErrorCode.INCOMPLETE_FOREIGN_CONFIGURATION])
+            self._show = common.response_data(out)
+        return self._show
+
+    @ property
+    def serial(self):
+        """ (str|None): get serial number if exists
+        """
+        return self.show.get('Serial Number')
+
+    @ property
+    def model(self):
+        """ (str|None): get model if exists
+        """
+        return self.show.get('Model')
+
+    @ property
+    def pci_address(self):
+        """ (str|None): get pci address if exists
+        """
+        return self.show.get('PCI Address')
+
     @property
     def facts(self):
         """ (dict): raw controller facts
@@ -503,6 +533,48 @@ class Controller(object):
             args.append(f'securitykey={securitykey}')
         return common.response_cmd(self._run(args))
 
+    def set_controller_mode(self, mode):
+        """Set controller mode command
+
+        Returns:
+            (dict): response cmd data
+        """
+        args = [
+            'set',
+            f'personality={mode}'
+        ]
+        return common.response_cmd(self._run(args))
+
+    def delete_vds(self):
+        """Delete all virtual drives
+
+        Returns:
+            (dict): response cmd data
+        """
+        args = [
+            '/vall',
+            'delete'
+        ]
+        return common.response_cmd(self._run(args))
+
+    @property
+    def phyerrorcounters(self):
+        """Get Phy Error Counters
+
+        Returns:
+            (dict): response cmd data
+        """
+        args = [
+            '/pall',
+            'show'
+        ]
+        try:
+            # RAID
+            return common.response_data(self._run(args + ['all']))['Phy Error Counters']
+        except exc.StorCliCmdError:
+            # HBA
+            return common.response_data(self._run(args + ['phyerrorcounters']))
+
 
 class Controllers(object):
     """StorCLI Controllers
@@ -529,15 +601,27 @@ class Controllers(object):
         self._storcli = StorCLI(binary)
 
     @ property
-    def _ctl_ids(self) -> List[int]:
-        out = self._storcli.run(['show'], allow_error_codes=[
-            StorcliErrorCode.INCOMPLETE_FOREIGN_CONFIGURATION])
-        response = common.response_data(out)
+    def show(self) -> List[dict]:
+        """Caching show output to allow getting info of static attributes
+        Return:
+            list: list of dicts of controllers data from show command
+        """
+        if not getattr(self, '_show', None):
+            out = self._storcli.run(['show'], allow_error_codes=[
+                StorcliErrorCode.INCOMPLETE_FOREIGN_CONFIGURATION])
+            response = common.response_data(out)
+            if "Number of Controllers" in response and response["Number of Controllers"] == 0:
+                self._show = []
+            else:
+                self._show = common.response_data_subkey(
+                    out, ['System Overview', 'IT System Overview'])
+        return self._show
 
-        if "Number of Controllers" in response and response["Number of Controllers"] == 0:
-            return []
-        else:
-            return [ctl['Ctl'] for ctl in common.response_data_subkey(out, ['System Overview', 'IT System Overview'])]
+    @ property
+    def _ctl_ids(self) -> List[int]:
+        """(list of str): controllers id
+        """
+        return [ctl['Ctl'] for ctl in self.show]
 
     @ property
     def _ctls(self):

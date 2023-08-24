@@ -6,6 +6,7 @@
 
 '''StorCLI virtual virtual drive python module
 '''
+import humanfriendly
 
 from .. import StorCLI
 from .. import common
@@ -85,6 +86,13 @@ class VirtualDrive(object):
 
         self._exist()
 
+    def __repr__(self):
+        """Define a basic representation of the class object."""
+        return '<VD {} | {}>'.format(
+            self._name,
+            ' '.join([self.raid, self.capacity, self.state])
+        )
+
     def _run(self, args, **kwargs):
         args = args[:]
         args.insert(0, self._name)
@@ -143,12 +151,19 @@ class VirtualDrive(object):
 
     @property
     def size(self):
-        """(str): virtual drive size
+        """(str): virtual drive size in bytes (pysmart compliance)
         """
         args = [
             'show'
         ]
-        return self._response_properties(self._run(args))['Size']
+        size = self._response_properties(self._run(args))['Size']
+        return humanfriendly.parse_size(size)
+
+    @property
+    def capacity(self):
+        """Size in human readable format (pysmart compliance)
+        """
+        return humanfriendly.format_size(self.size)
 
     @property
     def state(self) -> VDState:
