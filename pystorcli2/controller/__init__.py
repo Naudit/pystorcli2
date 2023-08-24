@@ -113,7 +113,7 @@ class Controller(object):
                 StorcliErrorCode.INCOMPLETE_FOREIGN_CONFIGURATION])
             self._show = common.response_data(out)
         return self._show
-    
+
     @ property
     def serial(self):
         """ (str): get serial number
@@ -131,7 +131,7 @@ class Controller(object):
         """ (str): get pci address
         """
         return self.show.get('PCI Address', '')
-    
+
     @ property
     def sas_address(self):
         """ (str): get sas address
@@ -621,13 +621,14 @@ class Controllers(object):
             if "Number of Controllers" in response and response["Number of Controllers"] == 0:
                 self._show = []
             else:
-                self._show = common.response_data_subkey(out, ['System Overview', 'IT System Overview'])
+                self._show = common.response_data_subkey(
+                    out, ['System Overview', 'IT System Overview'])
         return self._show
 
     @ property
     def _ctl_ids(self) -> List[int]:
         out = self.show
-        return out if not out else [ctl['Ctl'] for ctl in out]
+        return [] if not out else [ctl['Ctl'] for ctl in out]
 
     @ property
     def _ctls(self):
