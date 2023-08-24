@@ -163,7 +163,7 @@ class VirtualDrive(object):
     def capacity(self):
         """Size in human readable format (pysmart compliance)
         """
-        return humanfriendly.format_size(getattr(self, 'size', 0))
+        return humanfriendly.format_size(self.size)
 
     @property
     def state(self) -> VDState:

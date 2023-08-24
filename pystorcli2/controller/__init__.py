@@ -112,7 +112,7 @@ class Controller(object):
                 StorcliErrorCode.INCOMPLETE_FOREIGN_CONFIGURATION])
             self._show = common.response_data(out)
         return self._show
-    
+
     @ property
     def serial(self):
         """ (str|None): get serial number if exists
@@ -613,7 +613,8 @@ class Controllers(object):
             if "Number of Controllers" in response and response["Number of Controllers"] == 0:
                 self._show = []
             else:
-                self._show = common.response_data_subkey(out, ['System Overview', 'IT System Overview'])
+                self._show = common.response_data_subkey(
+                    out, ['System Overview', 'IT System Overview'])
         return self._show
 
     @ property
