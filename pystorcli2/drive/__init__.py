@@ -6,6 +6,7 @@
 
 '''StorCLI drive python module
 '''
+import humanfriendly
 
 from .. import StorCLI
 from .. import common
@@ -104,6 +105,13 @@ class Drive(object):
             self._ctl_id, self._encl_id, self._slot_id)
         return common.response_data(out)[detailed_info][attr]
 
+    def __repr__(self):
+        """Define a basic representation of the class object."""
+        return '<PD {} | {}>'.format(
+            self._name,
+            ' '.join([self.serial, self.medium, self.state])
+        )
+
     def _run(self, args, **kwargs):
         args = args[:]
         args.insert(0, self._name)
@@ -146,12 +154,29 @@ class Drive(object):
 
     @property
     def size(self):
-        """(str): drive size
+        """(str): drive size in bytes (pysmart compliance)
         """
         args = [
             'show'
         ]
-        return self._response_properties(self._run(args))['Size']
+        size = self._response_properties(self._run(args))['Size']
+        return humanfriendly.parse_size(size)
+
+    @property
+    def capacity(self):
+        """Size in human readable format (pysmart compliance)
+        """
+        return humanfriendly.format_size(self.size)
+
+    @property
+    @common.upper
+    def block_size(self):
+        """(str): block size 4KB / 512B
+        """
+        args = [
+            'show'
+        ]
+        return self._response_properties(self._run(args))['SeSz'].replace(' ', '').strip()
 
     @property
     @common.upper

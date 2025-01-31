@@ -34,7 +34,7 @@ class StorCLI(object):
         binary (str): storcli binary or full path to the binary
 
     Properties:
-        cache_enable (boolean): enable disable resposne cache (also setter)
+        cache_enable (boolean): enable disable response cache (also setter)
         cache (dict): get / set raw cache content
 
     Methods:

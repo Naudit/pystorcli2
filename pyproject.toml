@@ -36,7 +36,7 @@ classifiers = [
     'Programming Language :: Python',
     'Development Status :: 3 - Alpha',
 ]
-dependencies = []
+dependencies = ['humanfriendly']
 dynamic = ["version"]
 
 [project.urls]
@@ -47,4 +47,11 @@ pystorcli-metrics = "pystorcli2.bin.metrics:main"
 
 [project.optional-dependencies]
 # Requirements only needed for development
-dev = ['pytest', 'pytest-cov', 'coveralls', 'pdoc', 'mypy']
+dev = [
+    'coveralls',
+    'mypy',
+    'pdoc',
+    'pytest-cov',
+    'pytest',
+    'types-humanfriendly',
+]
